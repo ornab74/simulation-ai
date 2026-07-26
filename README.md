@@ -4,7 +4,16 @@ Simulation AI is a desktop world model that learns what happened on a visual com
 
 ![Simulation AI desktop surface](screenshot.png)
 
+
+## Download (MAC/Linux/Windows/IOS/Android)
+
+
+[Download From Github Releases](https://github.com/ornab74/simulation-ai/releases/tag/v1.133.7)
+
+
+
 ## 1. Simple explanation
+
 
 Think of Simulation AI as a AI generated computer desktop that can remember its previous screens.
 
