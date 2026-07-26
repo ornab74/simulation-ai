@@ -86,6 +86,9 @@ var boot_overlay: Control
 var boot_status: Label
 var boot_progress: ProgressBar
 var boot_continue: Button
+var boot_download_button: Button
+var boot_progress_tween: Tween
+var boot_download_polling := false
 var boot_app: Control
 var boot_key_input: LineEdit
 var boot_password_input: LineEdit
@@ -207,8 +210,8 @@ func _build_boot_overlay() -> Control:
 	overlay.add_theme_stylebox_override("panel", ThemeFactory.panel(Color("#050a12f8"), 0, ThemeFactory.CYAN, 0, 0))
 	var center := VBoxContainer.new()
 	center.set_anchors_preset(Control.PRESET_CENTER)
-	center.position = Vector2(-260, -190)
-	center.size = Vector2(520, 380)
+	center.position = Vector2(-260, -250)
+	center.size = Vector2(520, 500)
 	center.add_theme_constant_override("separation", 14)
 	overlay.add_child(center)
 	var glyph := Label.new()
@@ -237,6 +240,19 @@ func _build_boot_overlay() -> Control:
 	boot_progress.show_percentage = false
 	boot_progress.custom_minimum_size.y = 8
 	center.add_child(boot_progress)
+	var vault_label := Label.new()
+	vault_label.text = "MODEL VAULT  ·  GEMMA 4 E2B  ·  SHA-256 VERIFIED  ·  CHUNKED RESUME"
+	vault_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vault_label.add_theme_font_size_override("font_size", 10)
+	vault_label.add_theme_color_override("font_color", ThemeFactory.CYAN)
+	center.add_child(vault_label)
+	boot_download_button = Button.new()
+	boot_download_button.text = "DOWNLOAD / RESUME GEMMA"
+	boot_download_button.visible = false
+	boot_download_button.custom_minimum_size.y = 38
+	ThemeFactory.apply_button(boot_download_button, false)
+	boot_download_button.pressed.connect(_start_gemma_download)
+	center.add_child(boot_download_button)
 	boot_key_input = LineEdit.new()
 	boot_key_input.placeholder_text = "Optional OpenAI API key (encrypted locally)"
 	boot_key_input.secret = true
@@ -278,14 +294,16 @@ func _begin_boot_sequence() -> void:
 	if boot_overlay == null:
 		return
 	boot_app.visible = false
-	var tween := create_tween().set_loops()
-	tween.tween_property(boot_progress, "value", 92.0, 1.6).set_trans(Tween.TRANS_SINE)
-	tween.tween_property(boot_progress, "value", 18.0, 1.6).set_trans(Tween.TRANS_SINE)
+	boot_progress_tween = create_tween().set_loops()
+	boot_progress_tween.tween_property(boot_progress, "value", 92.0, 1.6).set_trans(Tween.TRANS_SINE)
+	boot_progress_tween.tween_property(boot_progress, "value", 18.0, 1.6).set_trans(Tween.TRANS_SINE)
 	await get_tree().create_timer(0.35).timeout
 	for _attempt in range(30):
 		if bridge.status == "online":
 			var result: Dictionary = await bridge.get_gemma_status()
 			_on_gemma_status(result)
+			if str(result.get("model", {}).get("state", "")) in ["starting", "downloading"]:
+				call_deferred("_poll_gemma_download")
 			var restored: Dictionary = await bridge.load_latest_screen()
 			var restored_info: Dictionary = restored.get("image", {})
 			if bool(restored.get("ok", false)) and not str(restored_info.get("path", "")).is_empty():
@@ -301,21 +319,91 @@ func _begin_boot_sequence() -> void:
 func _on_gemma_status(result: Dictionary) -> void:
 	if not bool(result.get("ok", false)):
 		boot_status.text = "Gemma status unavailable: %s" % str(result.get("error", "Surface Core offline"))
+		if boot_download_button != null:
+			boot_download_button.visible = true
+			boot_download_button.disabled = false
 		boot_continue.disabled = false
 		return
 	var model: Dictionary = result.get("model", {})
+	var state := str(model.get("state", ""))
+	if state == "downloading" or state == "starting":
+		if boot_progress_tween != null:
+			boot_progress_tween.kill()
+		var percent := int(round(float(model.get("progress", 0.0)) * 100.0))
+		var downloaded := _format_bytes(int(model.get("downloaded_bytes", 0)))
+		var total := _format_bytes(int(model.get("total_bytes", 0)))
+		var completed := int(model.get("completed_chunks", 0))
+		var chunks := int(model.get("chunks", 0))
+		boot_status.text = "Downloading Gemma… %d%%  ·  %s / %s  ·  chunks %d/%d" % [percent, downloaded, total, completed, chunks]
+		boot_progress.value = percent
+		boot_download_button.visible = true
+		boot_download_button.disabled = true
+		boot_download_button.text = "DOWNLOADING · RESUME SAFE"
+		boot_continue.disabled = false
+		return
 	if bool(model.get("verified", false)):
+		if boot_progress_tween != null:
+			boot_progress_tween.kill()
 		boot_status.text = "✓ Gemma verified  ·  SHA-256 locked  ·  world runtime ready"
 		boot_progress.value = 100.0
+		if boot_download_button != null:
+			boot_download_button.visible = false
 		boot_continue.disabled = false
 		call_deferred("_hide_saved_api_key_field")
-	elif str(model.get("state", "")) == "missing":
-		boot_status.text = "Gemma is not installed. Download it from Models after continuing."
-		boot_progress.value = 30.0
+	elif state in ["missing", "paused", "error", "corrupt"]:
+		if boot_progress_tween != null:
+			boot_progress_tween.kill()
+		var downloaded := _format_bytes(int(model.get("downloaded_bytes", 0)))
+		var total := _format_bytes(int(model.get("total_bytes", 0)))
+		var detail := "Gemma is not installed yet."
+		if state == "paused":
+			detail = "Gemma download paused with %s / %s saved. Resume safely." % [downloaded, total]
+		elif state == "error":
+			detail = "Download paused: %s  (%s / %s saved)" % [str(model.get("error", "network interruption")), downloaded, total]
+		elif state == "corrupt":
+			detail = "Existing model failed SHA-256 verification. Download again to repair it."
+		boot_status.text = detail
+		boot_progress.value = float(model.get("progress", 0.0)) * 100.0
+		if boot_download_button != null:
+			boot_download_button.visible = true
+			boot_download_button.disabled = false
+			boot_download_button.text = "DOWNLOAD / RESUME GEMMA"
 		boot_continue.disabled = false
 		call_deferred("_hide_saved_api_key_field")
 	else:
 		boot_status.text = "Surface Core is starting…"
+
+func _start_gemma_download() -> void:
+	if bridge == null or bridge.status != "online":
+		boot_status.text = "Surface Core is still starting; download will be available in a moment."
+		return
+	boot_download_button.disabled = true
+	boot_download_button.text = "STARTING CHUNKED DOWNLOAD…"
+	var result: Dictionary = await bridge.download_gemma()
+	_on_gemma_status(result)
+	await _poll_gemma_download()
+
+func _poll_gemma_download() -> void:
+	if boot_download_polling or bridge == null or bridge.status != "online":
+		return
+	boot_download_polling = true
+	for _attempt in range(720):
+		var result: Dictionary = await bridge.get_gemma_status()
+		_on_gemma_status(result)
+		var state := str(result.get("model", {}).get("state", ""))
+		if state in ["ready", "error", "corrupt", "paused"]:
+			break
+		await get_tree().create_timer(0.5).timeout
+	boot_download_polling = false
+	if boot_download_button != null and not boot_download_button.disabled:
+		boot_download_button.text = "DOWNLOAD / RESUME GEMMA"
+
+func _format_bytes(value: int) -> String:
+	if value < 1024 * 1024:
+		return "%d KB" % maxi(1, value / 1024)
+	if value < 1024 * 1024 * 1024:
+		return "%.1f MB" % (float(value) / (1024.0 * 1024.0))
+	return "%.2f GB" % (float(value) / (1024.0 * 1024.0 * 1024.0))
 
 func _hide_saved_api_key_field() -> void:
 	if boot_key_input == null or bridge.status != "online":

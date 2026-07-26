@@ -68,22 +68,56 @@ func _start_local_core() -> void:
 	var state_home := project_root.path_join(".simulation-ai")
 	if not OS.has_feature("editor"):
 		state_home = ProjectSettings.globalize_path("user://surface-core")
-	var packaged_core := project_root.path_join("backend/simulation-ai-core")
+	var models_home := project_root.path_join("models")
+	if not OS.has_feature("editor"):
+		models_home = state_home.path_join("models")
+	var packaged_candidates: Array[String] = []
+	if OS.get_name() == "Linux" and _linux_glibc_at_least(2, 38):
+		packaged_candidates.append(project_root.path_join("backend/simulation-ai-core-native"))
+	packaged_candidates.append(project_root.path_join("backend/simulation-ai-core"))
 	var python_path := project_root.path_join(".runtime/venv/bin/python")
 	var bootstrap := project_root.path_join("scripts/bootstrap_runtime.py")
 	var executable := "python3"
-	var arguments := PackedStringArray([bootstrap, "--run-core"])
+	var arguments := PackedStringArray([
+		bootstrap, "--run-core", "--home", state_home, "--models", models_home,
+	])
 	if OS.get_name() == "Windows":
-		packaged_core = project_root.path_join("backend/simulation-ai-core.exe")
+		packaged_candidates = [project_root.path_join("backend/simulation-ai-core.exe")]
 		python_path = project_root.path_join(".runtime/venv/Scripts/python.exe")
 		executable = "python.exe"
-	if FileAccess.file_exists(packaged_core):
+	for packaged_core in packaged_candidates:
+		if not FileAccess.file_exists(packaged_core):
+			continue
 		executable = packaged_core
-		arguments = PackedStringArray(["--host", "127.0.0.1", "--port", "47890", "--home", state_home])
-	elif FileAccess.file_exists(python_path):
+		arguments = PackedStringArray([
+			"--host", "127.0.0.1", "--port", "47890", "--home", state_home, "--models", models_home,
+		])
+		if OS.create_process(executable, arguments, false) >= 0:
+			return
+	if FileAccess.file_exists(python_path):
 		executable = python_path
-		arguments = PackedStringArray(["-m", "simulation_ai.server", "--host", "127.0.0.1", "--port", "47890", "--home", state_home])
+		arguments = PackedStringArray([
+			"-m", "simulation_ai.server", "--host", "127.0.0.1", "--port", "47890",
+			"--home", state_home, "--models", models_home,
+		])
 	OS.create_process(executable, arguments, false)
+
+func _linux_glibc_at_least(required_major: int, required_minor: int) -> bool:
+	if OS.get_name() != "Linux":
+		return false
+	var output: Array = []
+	if OS.execute("ldd", PackedStringArray(["--version"]), output, true) != 0:
+		return false
+	var version_text := "\n".join(output)
+	var regex := RegEx.new()
+	if regex.compile("GLIBC\\s+(\\d+)\\.(\\d+)") != OK:
+		return false
+	var match := regex.search(version_text)
+	if match == null:
+		return false
+	var major := int(match.get_string(1))
+	var minor := int(match.get_string(2))
+	return major > required_major or (major == required_major and minor >= required_minor)
 
 func refresh_snapshot() -> Dictionary:
 	if status != "online" or _busy:
@@ -433,9 +467,13 @@ func _api(method: String, path: String, payload: Dictionary) -> Dictionary:
 	if result.size() < 4:
 		return {"ok": false, "error": "transport_result"}
 	var status_code := int(result[1])
-	var parsed: Variant = JSON.parse_string(result[3].get_string_from_utf8())
-	if parsed is not Dictionary:
-		return {"ok": false, "error": "json"}
+	var response_text: String = result[3].get_string_from_utf8().strip_edges()
+	if response_text.is_empty():
+		return {"ok": false, "error": "empty_response", "detail": "Surface Core closed the connection before returning JSON.", "status_code": status_code}
+	var parser := JSON.new()
+	if parser.parse(response_text) != OK or not (parser.data is Dictionary):
+		return {"ok": false, "error": "json", "detail": "Surface Core returned invalid JSON.", "status_code": status_code}
+	var parsed: Dictionary = parser.data
 	if status_code < 200 or status_code >= 300:
 		return parsed
 	return parsed

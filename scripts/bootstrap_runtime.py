@@ -37,12 +37,17 @@ def main() -> int:
     parser.add_argument("--with-gemma", action="store_true")
     parser.add_argument("--run-core", action="store_true")
     parser.add_argument("--port", type=int, default=int(os.environ.get("SIMULATION_AI_PORT", "47890")))
+    parser.add_argument("--home", type=Path, default=ROOT / ".simulation-ai")
+    parser.add_argument("--models", type=Path, default=ROOT / "models")
     args = parser.parse_args()
     interpreter = ensure_runtime(args.with_gemma)
     if args.run_core:
         env = os.environ.copy()
         env["PYTHONPATH"] = str(ROOT / "core" / "src") + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
-        run([str(interpreter), "-m", "simulation_ai.server", "--host", "127.0.0.1", "--port", str(args.port), "--home", str(ROOT / ".simulation-ai")], env=env)
+        run([
+            str(interpreter), "-m", "simulation_ai.server", "--host", "127.0.0.1",
+            "--port", str(args.port), "--home", str(args.home), "--models", str(args.models),
+        ], env=env)
     else:
         print(f"[simulation-ai] ready: {interpreter}")
     return 0

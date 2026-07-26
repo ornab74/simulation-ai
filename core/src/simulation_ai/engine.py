@@ -101,7 +101,7 @@ class SurfaceEngine:
     this engine validates and commits state, immutable events, and branch refs.
     """
 
-    def __init__(self, home: Path) -> None:
+    def __init__(self, home: Path, models_dir: Path | None = None) -> None:
         self.store = SurfaceStore(home)
         self.observer = DeterministicObserver()
         self.proposer = RulePatchProposer()
@@ -114,8 +114,9 @@ class SurfaceEngine:
         self.workflow_runner = PromptWorkflowRunner(self.prompts, self.model_executor, self.prompt_runs)
         # The model is a project asset, not core state. Resolve it from the
         # process working directory so launching the server from scripts or
-        # an IDE still finds <project>/models/gemma-4-E2B-it.litertlm.
-        self.gemma = GemmaSetup(Path.cwd() / "models")
+        # Development keeps using <project>/models; packaged builds pass a
+        # writable per-user model vault explicitly.
+        self.gemma = GemmaSetup(models_dir or Path.cwd() / "models")
         self._lock = RLock()
         if not (self.store.refs / "HEAD").exists():
             self.boot()

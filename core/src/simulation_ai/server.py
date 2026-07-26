@@ -223,7 +223,7 @@ class SurfaceHandler(BaseHTTPRequestHandler):
             elif route == "/v1/replay":
                 self._send(200, {"ok": True, "verification": self.engine.verify_replay()})
             elif route == "/v1/models/gemma/download":
-                self._send(200, {"ok": True, "model": self.engine.gemma.download()})
+                self._send(200, {"ok": True, "model": self.engine.gemma.start_download()})
             elif route == "/v1/artifacts/export":
                 name = str(payload.get("name", "world-output.md"))[:120]
                 if "/" in name or "\\" in name or name in {".", ".."}:
@@ -300,10 +300,11 @@ def main() -> None:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=47890)
     parser.add_argument("--home", type=Path, default=Path(".simulation-ai"))
+    parser.add_argument("--models", type=Path, default=None)
     args = parser.parse_args()
     if args.host not in {"127.0.0.1", "localhost", "::1"} and os.environ.get("SIMULATION_AI_ALLOW_REMOTE") != "1":
         raise SystemExit("Refusing non-loopback bind without SIMULATION_AI_ALLOW_REMOTE=1")
-    engine = SurfaceEngine(args.home)
+    engine = SurfaceEngine(args.home, models_dir=args.models)
     SurfaceHandler.engine = engine
     SurfaceHandler.bearer_token = os.environ.get("SIMULATION_AI_TOKEN", "").strip()
     server = ThreadingHTTPServer((args.host, args.port), SurfaceHandler)

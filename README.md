@@ -2,6 +2,12 @@
 
 Simulation AI is a desktop world model that learns what happened on a visual computer surface and generates the next screen after the user interacts with it.
 
+### Linux runtime compatibility
+
+Linux releases include two backend executables. The portable backend is built on Ubuntu 22.04 and is the compatibility choice for older glibc installations. The native backend is built on Ubuntu 24.04 and can use newer system libraries. At boot, Godot reads the host glibc version: hosts with glibc 2.38 or newer use `backend/simulation-ai-core-native`; older hosts automatically use `backend/simulation-ai-core`. This avoids the `GLIBC_2.38 not found` failure while still allowing newer machines to use the native build. Both variants expose the same local API and share the same per-user encrypted state directory.
+
+The first boot also provides a Gemma model-vault downloader. It verifies the fixed SHA-256, downloads in resumable 16 MiB chunks with four workers, keeps completed chunks after a network interruption, and assembles the final `.litertlm` file atomically. A later boot continues from the saved chunks instead of starting over. The model is downloaded into the user data vault for packaged builds, so the read-only application bundle is never modified.
+
 ![Simulation AI desktop surface](screenshot.png)
 
 
@@ -111,6 +117,8 @@ Each package contains:
 - a Godot desktop executable;
 - a PyInstaller `simulation-ai-core` backend executable;
 - a `backend/` runtime that Godot starts automatically (embedded inside the macOS app bundle and stored beside the desktop executable on Linux and Windows).
+
+The Linux archive contains both `simulation-ai-core` (portable/glibc 2.35 baseline) and `simulation-ai-core-native` (glibc 2.38+). The Godot boot selector chooses the compatible one automatically; users do not need to choose a build manually.
 
 The local backend packaging command is:
 

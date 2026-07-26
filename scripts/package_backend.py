@@ -12,9 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, default=ROOT / "dist" / "backend")
+    parser.add_argument("--name", default="", help="Override the backend executable name")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    name = "simulation-ai-core.exe" if sys.platform == "win32" else "simulation-ai-core"
+    name = args.name.strip() or ("simulation-ai-core.exe" if sys.platform == "win32" else "simulation-ai-core")
     command = [
         sys.executable, "-m", "PyInstaller", "--clean", "--noconfirm", "--onefile",
         "--name", name.removesuffix(".exe"), "--paths", str(ROOT / "core" / "src"),
