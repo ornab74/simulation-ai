@@ -6,8 +6,23 @@ HOST="${SIMULATION_AI_HOST:-127.0.0.1}"
 PORT="${SIMULATION_AI_PORT:-47890}"
 HOME_DIR="${SIMULATION_AI_HOME:-$ROOT/.simulation-ai}"
 
-RUNTIME_PYTHON="${SIMULATION_AI_PYTHON:-$ROOT/.runtime/venv/bin/python}"
+if [ -n "${SIMULATION_AI_PYTHON:-}" ]; then
+  RUNTIME_PYTHON="$SIMULATION_AI_PYTHON"
+elif [ "${SIMULATION_AI_WITH_GEMMA:-0}" = "1" ] && [ -x "$ROOT/.venv-gemma/bin/python" ] && "$ROOT/.venv-gemma/bin/python" -c 'import litert_lm' >/dev/null 2>&1; then
+  # Prefer the already prepared Gemma environment when the operator asks for
+  # local inference. This avoids silently starting the plain core runtime.
+  RUNTIME_PYTHON="$ROOT/.venv-gemma/bin/python"
+else
+  RUNTIME_PYTHON="$ROOT/.runtime/venv/bin/python"
+fi
+
+NEEDS_BOOTSTRAP=0
 if [ ! -x "$RUNTIME_PYTHON" ]; then
+  NEEDS_BOOTSTRAP=1
+elif [ "${SIMULATION_AI_WITH_GEMMA:-0}" = "1" ] && ! "$RUNTIME_PYTHON" -c 'import litert_lm' >/dev/null 2>&1; then
+  NEEDS_BOOTSTRAP=1
+fi
+if [ "$NEEDS_BOOTSTRAP" = "1" ]; then
   BOOTSTRAP_ARGS=()
   if [ "${SIMULATION_AI_WITH_GEMMA:-0}" = "1" ]; then
     BOOTSTRAP_ARGS+=("--with-gemma")

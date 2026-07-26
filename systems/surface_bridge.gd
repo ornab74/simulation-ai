@@ -18,7 +18,7 @@ signal prompt_workflow_completed(workflow_run: Dictionary)
 signal gemma_status_changed(result: Dictionary)
 
 const ENDPOINT := "http://127.0.0.1:47890"
-const TIMEOUT := 75.0
+const TIMEOUT := 210.0
 
 var status := "offline"
 var detail := "Surface Core is not connected"
@@ -71,6 +71,7 @@ func _start_local_core() -> void:
 	var models_home := project_root.path_join("models")
 	if not OS.has_feature("editor"):
 		models_home = state_home.path_join("models")
+	var gemma_requested := OS.get_environment("SIMULATION_AI_WITH_GEMMA") == "1" or FileAccess.file_exists(models_home.path_join("gemma-4-E2B-it.litertlm"))
 	var packaged_candidates: Array[String] = []
 	if OS.get_name() == "Linux" and _linux_glibc_at_least(2, 38):
 		packaged_candidates.append(project_root.path_join("backend/simulation-ai-core-native"))
@@ -81,6 +82,8 @@ func _start_local_core() -> void:
 	var arguments := PackedStringArray([
 		bootstrap, "--run-core", "--home", state_home, "--models", models_home,
 	])
+	if gemma_requested:
+		arguments.append("--with-gemma")
 	if OS.get_name() == "Windows":
 		packaged_candidates = [project_root.path_join("backend/simulation-ai-core.exe")]
 		python_path = project_root.path_join(".runtime/venv/Scripts/python.exe")
@@ -95,11 +98,21 @@ func _start_local_core() -> void:
 		if OS.create_process(executable, arguments, false) >= 0:
 			return
 	if FileAccess.file_exists(python_path):
-		executable = python_path
-		arguments = PackedStringArray([
-			"-m", "simulation_ai.server", "--host", "127.0.0.1", "--port", "47890",
-			"--home", state_home, "--models", models_home,
-		])
+		var runtime_ready := true
+		if gemma_requested:
+			var probe_output: Array = []
+			runtime_ready = OS.execute(python_path, PackedStringArray(["-c", "import litert_lm"]), probe_output, true) == 0
+		if runtime_ready:
+			executable = python_path
+			arguments = PackedStringArray([
+				"-m", "simulation_ai.server", "--host", "127.0.0.1", "--port", "47890",
+				"--home", state_home, "--models", models_home,
+			])
+		else:
+			executable = "python3"
+			arguments = PackedStringArray([
+				bootstrap, "--run-core", "--with-gemma", "--home", state_home, "--models", models_home,
+			])
 	OS.create_process(executable, arguments, false)
 
 func _linux_glibc_at_least(required_major: int, required_minor: int) -> bool:
@@ -401,6 +414,12 @@ func get_gemma_status() -> Dictionary:
 	response = {"ok": false, "error": "surface_core_busy", "detail": "Surface Core did not become available during model startup."}
 	gemma_status_changed.emit(response)
 	return response
+
+func get_gemma_diagnostics(refresh := false) -> Dictionary:
+	if status != "online":
+		return {"ok": false, "error": "surface_core_offline"}
+	var suffix := "?refresh=1" if refresh else ""
+	return await _api("GET", "/v1/models/gemma/diagnostics%s" % suffix, {})
 
 func download_gemma() -> Dictionary:
 	if status != "online":

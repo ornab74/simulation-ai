@@ -83,6 +83,9 @@ class SurfaceHandler(BaseHTTPRequestHandler):
                 })
             elif parsed.path == "/v1/models/gemma/status":
                 self._send(200, {"ok": True, "model": self.engine.gemma.status()})
+            elif parsed.path == "/v1/models/gemma/diagnostics":
+                refresh = query.get("refresh", ["0"])[0] in {"1", "true", "yes"}
+                self._send(200, {"ok": True, "diagnostics": self.engine.gemma.diagnostics(refresh=refresh)})
             elif parsed.path.startswith("/v1/prompt-runs/"):
                 run_id = parsed.path.removeprefix("/v1/prompt-runs/").strip("/")
                 if not run_id:
@@ -245,10 +248,16 @@ class SurfaceHandler(BaseHTTPRequestHandler):
             elif route == "/v1/vision/describe-click":
                 x, y = float(payload.get("x", 0)), float(payload.get("y", 0))
                 button = str(payload.get("button", "left"))
+                double_click = bool(payload.get("double_click", False))
+                gemma_result = self.engine.describe_click_with_gemma(x, y, button=button, double_click=double_click)
+                if bool(gemma_result.get("ok", False)):
+                    self._send(200, {**gemma_result, "description": json.dumps(gemma_result.get("observation", {}), ensure_ascii=False)})
+                    return
                 gesture = ("double-" if bool(payload.get("double_click", False)) else "") + f"{button}-click"
                 normalized_x, normalized_y = x / 1536.0, y / 1024.0
                 region = "bottom-left Start menu area" if normalized_y > 0.84 and normalized_x < 0.16 else ("desktop shortcut area" if normalized_x < 0.24 and normalized_y < 0.82 else ("taskbar process area" if normalized_y > 0.84 else ("system tray and clock area" if normalized_x > 0.82 and normalized_y > 0.84 else "desktop surface")))
-                self._send(200, {"ok": True, "description": f"Gemma vision observation: zoom into the USER {gesture.upper()} HERE annotation at local pixel ({x:.0f}, {y:.0f}); the user interacted with the {region}. Read any nearby label or text box and report its text and bounding region before applying the action.", "coordinate_space": "world-surface-local-pixels", "annotation": "USER DOUBLE-CLICKED HERE" if bool(payload.get("double_click", False)) else "USER CLICKED HERE", "model": "gemma-4-e2b-observation-contract"})
+                diagnostics = gemma_result.get("diagnostics", {})
+                self._send(200, {"ok": True, "description": f"Local vision fallback: zoom into the USER {gesture.upper()} HERE annotation at local pixel ({x:.0f}, {y:.0f}); the user interacted with the {region}. Read any nearby label or text box and report its text and bounding region before applying the action.", "coordinate_space": "world-surface-local-pixels", "annotation": "USER DOUBLE-CLICKED HERE" if bool(payload.get("double_click", False)) else "USER CLICKED HERE", "model": "deterministic-fallback", "vision_runtime": "unavailable", "vision_error": gemma_result.get("detail", gemma_result.get("error", "Gemma vision unavailable")), "diagnostics": diagnostics})
             else:
                 self._send(404, {"ok": False, "error": "route_not_found"})
         except PermissionError as exc:
@@ -285,14 +294,19 @@ class SurfaceHandler(BaseHTTPRequestHandler):
 
     def _send(self, status: int, value: dict[str, Any]) -> None:
         body = json.dumps(value, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "no-store")
-        self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("Referrer-Policy", "no-referrer")
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("Referrer-Policy", "no-referrer")
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            # Image requests can outlive the UI timeout; do not turn a client
+            # disconnect into a second traceback while handling the response.
+            return
 
 
 def main() -> None:

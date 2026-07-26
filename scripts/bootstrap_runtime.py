@@ -28,7 +28,16 @@ def ensure_runtime(with_gemma: bool) -> Path:
         venv.EnvBuilder(with_pip=True, clear=False, symlinks=(os.name != "nt")).create(VENV)
     run([str(interpreter), "-m", "pip", "install", "--disable-pip-version-check", "--upgrade", "pip"])
     run([str(interpreter), "-m", "pip", "install", "--disable-pip-version-check", "-e", str(ROOT / "core")])
+    gemma_installed = False
     if with_gemma:
+        probe = subprocess.run(
+            [str(interpreter), "-c", "import litert_lm"],
+            cwd=ROOT,
+            capture_output=True,
+            check=False,
+        )
+        gemma_installed = probe.returncode == 0
+    if with_gemma and not gemma_installed:
         run([str(interpreter), "-m", "pip", "install", "--disable-pip-version-check", "litert-lm==0.10.1"])
     return interpreter
 

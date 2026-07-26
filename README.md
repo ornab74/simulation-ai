@@ -108,6 +108,8 @@ Images are stored as encrypted AES-GCM BLOBs in:
 
 The UI materializes a temporary decrypted copy only when it needs to display an image. Models, credentials, databases, virtual environments, image caches, and binaries are excluded from Git.
 
+Image inputs are bounded to safe PNG dimensions and a 50 MiB payload, decoded with strict base64 validation, written atomically with owner-only permissions, and rejected if the source is a symlink. Prompts are sanitized, bounded, and encrypted in the image database; legacy plaintext prompt columns are migrated when the vault is unlocked.
+
 ### Build standalone packages
 
 GitHub Actions builds Godot and the Python backend together for Linux, Windows, and macOS using [.github/workflows/build.yml](.github/workflows/build.yml). The macOS release is a mountable `Simulation-AI-macOS-universal.dmg` containing the universal `.app` and an `/Applications` shortcut.

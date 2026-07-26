@@ -33,6 +33,7 @@ build/
 **/origin-image.id
 **/.image_cache/
 *.litertlm
+models/*.xnnpack_cache*
 *.part
 *.aes
 *.vault.json

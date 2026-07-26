@@ -87,6 +87,8 @@ var boot_status: Label
 var boot_progress: ProgressBar
 var boot_continue: Button
 var boot_download_button: Button
+var boot_diagnostics_button: Button
+var boot_diagnostics_label: Label
 var boot_progress_tween: Tween
 var boot_download_polling := false
 var boot_app: Control
@@ -236,6 +238,14 @@ func _build_boot_overlay() -> Control:
 	boot_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	boot_status.add_theme_color_override("font_color", ThemeFactory.MINT)
 	center.add_child(boot_status)
+	boot_diagnostics_label = Label.new()
+	boot_diagnostics_label.text = "LiteRT-LM runtime check pending…"
+	boot_diagnostics_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boot_diagnostics_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	boot_diagnostics_label.custom_minimum_size.y = 42
+	boot_diagnostics_label.add_theme_font_size_override("font_size", 10)
+	boot_diagnostics_label.add_theme_color_override("font_color", ThemeFactory.MUTED)
+	center.add_child(boot_diagnostics_label)
 	boot_progress = ProgressBar.new()
 	boot_progress.show_percentage = false
 	boot_progress.custom_minimum_size.y = 8
@@ -253,6 +263,13 @@ func _build_boot_overlay() -> Control:
 	ThemeFactory.apply_button(boot_download_button, false)
 	boot_download_button.pressed.connect(_start_gemma_download)
 	center.add_child(boot_download_button)
+	boot_diagnostics_button = Button.new()
+	boot_diagnostics_button.text = "RUN GEMMA DIAGNOSTICS"
+	boot_diagnostics_button.visible = false
+	boot_diagnostics_button.custom_minimum_size.y = 32
+	ThemeFactory.apply_button(boot_diagnostics_button, false)
+	boot_diagnostics_button.pressed.connect(_run_gemma_diagnostics)
+	center.add_child(boot_diagnostics_button)
 	boot_key_input = LineEdit.new()
 	boot_key_input.placeholder_text = "Optional OpenAI API key (encrypted locally)"
 	boot_key_input.secret = true
@@ -302,6 +319,8 @@ func _begin_boot_sequence() -> void:
 		if bridge.status == "online":
 			var result: Dictionary = await bridge.get_gemma_status()
 			_on_gemma_status(result)
+			var diagnostics: Dictionary = await bridge.get_gemma_diagnostics(true)
+			_on_gemma_diagnostics(diagnostics)
 			if str(result.get("model", {}).get("state", "")) in ["starting", "downloading"]:
 				call_deferred("_poll_gemma_download")
 			var restored: Dictionary = await bridge.load_latest_screen()
@@ -344,7 +363,7 @@ func _on_gemma_status(result: Dictionary) -> void:
 	if bool(model.get("verified", false)):
 		if boot_progress_tween != null:
 			boot_progress_tween.kill()
-		boot_status.text = "✓ Gemma verified  ·  SHA-256 locked  ·  world runtime ready"
+		boot_status.text = "✓ Gemma model verified  ·  SHA-256 locked  ·  checking LiteRT runtime…"
 		boot_progress.value = 100.0
 		if boot_download_button != null:
 			boot_download_button.visible = false
@@ -373,6 +392,40 @@ func _on_gemma_status(result: Dictionary) -> void:
 	else:
 		boot_status.text = "Surface Core is starting…"
 
+func _run_gemma_diagnostics() -> void:
+	if bridge == null or bridge.status != "online":
+		boot_diagnostics_label.text = "Surface Core is offline; diagnostics will run when the local backend is online."
+		return
+	boot_diagnostics_button.disabled = true
+	boot_diagnostics_button.text = "CHECKING LITERT-LM…"
+	boot_diagnostics_label.text = "Checking model hash, Python package, native library, and LiteRT-LM CLI…"
+	var result: Dictionary = await bridge.get_gemma_diagnostics(true)
+	_on_gemma_diagnostics(result)
+
+func _on_gemma_diagnostics(result: Dictionary) -> void:
+	if not bool(result.get("ok", false)):
+		boot_diagnostics_label.text = "Boot diagnostics unavailable: %s" % str(result.get("detail", result.get("error", "unknown error")))
+		boot_diagnostics_label.add_theme_color_override("font_color", ThemeFactory.AMBER)
+		return
+	var diagnostics: Dictionary = result.get("diagnostics", {})
+	var lines: Array[String] = []
+	for raw_check in diagnostics.get("checks", []):
+		if not (raw_check is Dictionary):
+			continue
+		var check: Dictionary = raw_check
+		var mark := "✓" if bool(check.get("ok", false)) else "!"
+		lines.append("%s %s: %s" % [mark, str(check.get("title", check.get("id", "check"))), str(check.get("detail", ""))])
+	var ready := bool(diagnostics.get("ready_for_inference", false))
+	boot_diagnostics_label.text = "LITERT BOOT DIAGNOSTICS\n" + "\n".join(lines.slice(0, 5))
+	boot_diagnostics_label.add_theme_color_override("font_color", ThemeFactory.MINT if ready else ThemeFactory.AMBER)
+	boot_diagnostics_button.disabled = false
+	boot_diagnostics_button.text = "RUN GEMMA DIAGNOSTICS"
+	boot_diagnostics_button.visible = not ready
+	if ready:
+		boot_status.text = "✓ Gemma + LiteRT-LM ready  ·  model hash verified  ·  vision probe available"
+	else:
+		boot_status.text = "Gemma model found, but LiteRT-LM is not ready  ·  %s" % str(diagnostics.get("next_action", "see diagnostics"))
+
 func _start_gemma_download() -> void:
 	if bridge == null or bridge.status != "online":
 		boot_status.text = "Surface Core is still starting; download will be available in a moment."
@@ -393,10 +446,13 @@ func _poll_gemma_download() -> void:
 		var state := str(result.get("model", {}).get("state", ""))
 		if state in ["ready", "error", "corrupt", "paused"]:
 			break
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(2.5).timeout
 	boot_download_polling = false
 	if boot_download_button != null and not boot_download_button.disabled:
 		boot_download_button.text = "DOWNLOAD / RESUME GEMMA"
+	if bridge != null and bridge.status == "online":
+		var diagnostics: Dictionary = await bridge.get_gemma_diagnostics(true)
+		_on_gemma_diagnostics(diagnostics)
 
 func _format_bytes(value: int) -> String:
 	if value < 1024 * 1024:

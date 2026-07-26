@@ -26,7 +26,7 @@ var desktop_texture: Texture2D
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	focus_mode = Control.FOCUS_ALL
-	set_process(true)
+	_update_process_state()
 	queue_redraw()
 
 func set_state(state: Dictionary) -> void:
@@ -47,6 +47,7 @@ func set_state(state: Dictionary) -> void:
 	links = state.get("ui", {}).get("topology_links", [])
 	selected_object_id = str(state.get("selected_object_id", selected_object_id))
 	simulation_running = bool(state.get("ui", {}).get("simulation_running", true))
+	_update_process_state()
 	queue_redraw()
 
 func set_selected(object_id: String) -> void:
@@ -55,16 +56,19 @@ func set_selected(object_id: String) -> void:
 
 func set_running(value: bool) -> void:
 	simulation_running = value
+	_update_process_state()
 	queue_redraw()
 
 func set_desktop_texture(texture: Texture2D) -> void:
 	desktop_texture = texture
+	_update_process_state()
 	queue_redraw()
 
 func paint_click(position: Vector2, double_click: bool, annotation := "") -> void:
 	click_markers.append({"position": position, "double_click": double_click, "annotation": annotation if not annotation.is_empty() else ("USER DOUBLE-CLICKED HERE" if double_click else "USER CLICKED HERE"), "age": 0.0})
 	if click_markers.size() > 12:
 		click_markers.pop_front()
+	_update_process_state()
 	queue_redraw()
 
 func reset_view() -> void:
@@ -74,11 +78,23 @@ func reset_view() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	if simulation_running:
+	var redraw := false
+	if simulation_running and desktop_texture == null:
 		pulse = fmod(pulse + delta * 0.42, 1.0)
+		redraw = true
+	var active_markers: Array[Dictionary] = []
 	for marker in click_markers:
 		marker.age = minf(float(marker.age) + delta, 2.0)
+		if float(marker.age) < 2.0:
+			active_markers.append(marker)
+			redraw = true
+	click_markers = active_markers
+	_update_process_state()
+	if redraw:
 		queue_redraw()
+
+func _update_process_state() -> void:
+	set_process((desktop_texture == null and simulation_running) or not click_markers.is_empty())
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:

@@ -336,6 +336,12 @@ class SurfaceEngine:
         memoric = json.dumps(self.memoric.context(), ensure_ascii=False, separators=(",", ":"))
         return edit_image(self.credentials, prompt + continuity + "\nMEMORIC CONSTRAINT REGISTER:\n" + memoric, source, self.store.root / "artifacts")
 
+    def describe_click_with_gemma(self, x: float, y: float, *, button: str = "left", double_click: bool = False) -> dict[str, object]:
+        image_path = self.images.latest_path()
+        if image_path is None:
+            return {"ok": False, "error": "vision_image_unavailable", "detail": "No encrypted desktop frame is available for Gemma to inspect."}
+        return self.gemma.vision_probe(image_path, x=x, y=y, button=button, double_click=double_click)
+
     def prompt_catalog(self, *, include_shared: bool = True) -> dict[str, Any]:
         return self.prompts.catalog(include_shared=include_shared)
 
