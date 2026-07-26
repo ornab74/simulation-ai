@@ -32,6 +32,27 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def default_model_dir() -> Path:
+    """Return the platform-private model vault, with a legacy dev fallback."""
+    configured = os.environ.get("SIMULATION_AI_MODEL_DIR", "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    if sys.platform == "win32":
+        base = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
+    elif sys.platform == "darwin":
+        base = Path.home() / "Library" / "Application Support"
+    else:
+        base = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    secure = base / "SimulationAI" / "models"
+    legacy = Path.cwd() / "models"
+    # Do not duplicate a multi-gigabyte developer model automatically. The
+    # legacy vault is hardened in place until the operator downloads/migrates
+    # a model into the platform vault.
+    if (legacy / GEMMA_MODEL).is_file() and not (secure / GEMMA_MODEL).exists():
+        return legacy
+    return secure
+
+
 class GemmaSetup:
     """Model vault with resumable ranged chunks and background progress."""
 
@@ -48,13 +69,15 @@ class GemmaSetup:
         self._diagnostics_lock = Lock()
         self._last_diagnostics: dict[str, object] | None = None
         self._last_diagnostics_at = 0.0
+        self._secure_vault()
 
     def status(self) -> dict[str, object]:
+        self._secure_vault()
         with self._lock:
             progress = dict(self._progress)
             active = self._thread is not None and self._thread.is_alive()
 
-        if self.path.exists():
+        if self.path.is_file() and not self.path.is_symlink():
             actual = self._file_hash_cached()
             verified = actual == GEMMA_SHA256
             if verified:
@@ -108,6 +131,32 @@ class GemmaSetup:
             return self.status()
         return self.status()
 
+    def _secure_vault(self) -> None:
+        """Harden model directories/files without following symlinks."""
+        try:
+            self.models_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
+            if os.name != "nt":
+                os.chmod(self.models_dir, 0o700)
+            if self.chunk_dir.exists() and not self.chunk_dir.is_symlink():
+                self.chunk_dir.mkdir(mode=0o700, exist_ok=True)
+                if os.name != "nt":
+                    os.chmod(self.chunk_dir, 0o700)
+            for item in (self.path, self.path.with_suffix(self.path.suffix + ".part"), self.path.with_suffix(self.path.suffix + ".assemble.part"), self.manifest_path):
+                if item.is_file() and not item.is_symlink() and os.name != "nt":
+                    os.chmod(item, 0o600)
+            if self.models_dir.exists() and not self.models_dir.is_symlink():
+                for item in self.models_dir.iterdir():
+                    if item.is_file() and not item.is_symlink() and item.name.startswith(f"{GEMMA_MODEL}.") and os.name != "nt":
+                        os.chmod(item, 0o600)
+            if self.chunk_dir.exists() and not self.chunk_dir.is_symlink():
+                for item in self.chunk_dir.iterdir():
+                    if item.is_file() and not item.is_symlink() and os.name != "nt":
+                        os.chmod(item, 0o600)
+        except OSError:
+            # Diagnostics reports the exact permission problem; model startup
+            # must remain usable on filesystems that do not support chmod.
+            return
+
     def diagnostics(self, *, refresh: bool = False) -> dict[str, object]:
         """Report every boot prerequisite without loading the 2.4 GB model.
 
@@ -123,7 +172,8 @@ class GemmaSetup:
                 return dict(self._last_diagnostics)
 
         checks: list[dict[str, object]] = []
-        model_exists = self.path.is_file()
+        self._secure_vault()
+        model_exists = self.path.is_file() and not self.path.is_symlink()
         actual_hash = ""
         model_bytes = 0
         model_error = ""
@@ -151,9 +201,12 @@ class GemmaSetup:
         mode_ok = True
         if model_exists:
             try:
-                mode = self.path.stat().st_mode & 0o777
-                mode_ok = (mode & 0o077) == 0
-                mode_detail = f"permissions {mode:03o}" + (" (private)" if mode_ok else " (other users can read it)")
+                if os.name == "nt":
+                    mode_detail = "Windows user-local application-data ACL (POSIX mode bits not applicable)"
+                else:
+                    mode = self.path.stat().st_mode & 0o777
+                    mode_ok = (mode & 0o077) == 0
+                    mode_detail = f"permissions {mode:03o}" + (" (private)" if mode_ok else " (other users can read it)")
             except OSError as exc:
                 mode_ok = False
                 mode_detail = str(exc)
@@ -285,6 +338,26 @@ class GemmaSetup:
             return {"ok": False, "error": "vision_image_unavailable", "detail": "The encrypted desktop frame could not be materialized safely."}
         model_path = self.path.resolve()
         safe_image_path = image_path.resolve()
+        backend = os.environ.get("SIMULATION_AI_GEMMA_BACKEND", "cpu").strip().lower()
+        if backend not in {"cpu", "gpu"}:
+            backend = "cpu"
+
+        # A PyInstaller executable cannot re-run itself with ``python -c``.
+        # Use the bundled worker directly in frozen builds; development runs
+        # keep the child-process isolation below for native-loader safety.
+        if getattr(sys, "frozen", False):
+            try:
+                from .gemma_vision import run_probe
+                response = run_probe(model_path, safe_image_path, x, y, button, double_click)
+                return {
+                    "ok": True,
+                    "model": GEMMA_MODEL,
+                    "backend": backend,
+                    "observation": response,
+                    "coordinate_space": "world-surface-local-pixels",
+                }
+            except Exception as exc:  # bundled native runtime failure
+                return {"ok": False, "error": "gemma_vision_failed", "detail": str(exc)[:1200], "backend": backend}
 
         script = r'''
 import json
@@ -314,9 +387,6 @@ with Engine(model_path, **engine_kwargs) as engine:
                     text_parts.append(str(item.get("text", "")))
         print(json.dumps({"content": [{"type": "text", "text": "".join(text_parts)}]}, ensure_ascii=False))
 '''
-        backend = os.environ.get("SIMULATION_AI_GEMMA_BACKEND", "cpu").strip().lower()
-        if backend not in {"cpu", "gpu"}:
-            backend = "cpu"
         environment = os.environ.copy()
         environment["SIMULATION_AI_GEMMA_BACKEND"] = backend
         try:
@@ -332,6 +402,7 @@ with Engine(model_path, **engine_kwargs) as engine:
             return {"ok": False, "error": "gemma_vision_timeout", "detail": "LiteRT-LM did not finish the isolated vision probe within 150 seconds.", "backend": backend}
         except OSError as exc:
             return {"ok": False, "error": "gemma_vision_process", "detail": str(exc)[:240], "backend": backend}
+        self._secure_vault()
         if completed.returncode != 0:
             stderr = (completed.stderr or "").strip()
             stdout = (completed.stdout or "").strip()
@@ -372,6 +443,7 @@ with Engine(model_path, **engine_kwargs) as engine:
             actual = sha256_file(self.path)
             if actual != GEMMA_SHA256:
                 raise ValueError(f"SHA-256 mismatch: {actual}")
+            self._secure_vault()
             with self._lock:
                 self._progress = {"state": "ready", "error": "", "total_bytes": total}
             self._cleanup_chunks()
@@ -428,6 +500,8 @@ with Engine(model_path, **engine_kwargs) as engine:
             for future in as_completed(futures):
                 future.result()
         assemble = self.path.with_suffix(self.path.suffix + ".assemble.part")
+        if not assemble.exists():
+            assemble.touch(mode=0o600)
         with assemble.open("wb") as output:
             for index in range(chunks):
                 part = self._chunk_path(index)
@@ -466,6 +540,8 @@ with Engine(model_path, **engine_kwargs) as engine:
                 with urlopen(request, timeout=90) as response:
                     if int(getattr(response, "status", 200) or 200) != 206:
                         raise ValueError("Model server stopped honoring ranged requests")
+                    if not part.exists():
+                        part.touch(mode=0o600)
                     with part.open("ab") as output:
                         for data in iter(lambda: response.read(1024 * 1024), b""):
                             output.write(data)
@@ -489,6 +565,8 @@ with Engine(model_path, **engine_kwargs) as engine:
         if offset:
             headers["Range"] = f"bytes={offset}-"
         request = Request(GEMMA_URL, headers=headers)
+        if not partial.exists():
+            partial.touch(mode=0o600)
         with urlopen(request, timeout=90) as response:
             status = int(getattr(response, "status", 200) or 200)
             if offset and status != 206:
@@ -543,6 +621,8 @@ with Engine(model_path, **engine_kwargs) as engine:
         temporary = self.manifest_path.with_suffix(".tmp")
         temporary.write_text(json.dumps(value, separators=(",", ":")), encoding="utf-8")
         os.replace(temporary, self.manifest_path)
+        if os.name != "nt":
+            os.chmod(self.manifest_path, 0o600)
 
     def _file_hash_cached(self) -> str:
         stat = self.path.stat()

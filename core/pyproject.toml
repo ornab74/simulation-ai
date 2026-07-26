@@ -9,6 +9,9 @@ description = "Deterministic semantic authority and verified render queue for Si
 requires-python = ">=3.11"
 dependencies = ["cryptography>=46,<48", "jsonschema>=4.23,<5"]
 
+[project.optional-dependencies]
+gemma = ["litert-lm==0.10.1", "litert-lm-api==0.14.0"]
+
 [project.scripts]
 simulation-ai-core = "simulation_ai.server:main"
 

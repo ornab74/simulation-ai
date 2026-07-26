@@ -38,7 +38,7 @@ def ensure_runtime(with_gemma: bool) -> Path:
         )
         gemma_installed = probe.returncode == 0
     if with_gemma and not gemma_installed:
-        run([str(interpreter), "-m", "pip", "install", "--disable-pip-version-check", "litert-lm==0.10.1"])
+        run([str(interpreter), "-m", "pip", "install", "--disable-pip-version-check", "litert-lm==0.10.1", "litert-lm-api==0.14.0"])
     return interpreter
 
 def main() -> int:

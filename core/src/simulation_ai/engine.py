@@ -23,7 +23,7 @@ from .model import (
     digest,
 )
 from .render import build_render_job, native_frame_for, verify_candidate
-from .model_setup import GemmaSetup
+from .model_setup import GemmaSetup, default_model_dir
 from .image_generation import generate_image, edit_image
 from .encrypted_images import EncryptedImageStore
 from .memoric import MemoricRegister
@@ -116,7 +116,7 @@ class SurfaceEngine:
         # process working directory so launching the server from scripts or
         # Development keeps using <project>/models; packaged builds pass a
         # writable per-user model vault explicitly.
-        self.gemma = GemmaSetup(models_dir or Path.cwd() / "models")
+        self.gemma = GemmaSetup(models_dir or default_model_dir())
         self._lock = RLock()
         if not (self.store.refs / "HEAD").exists():
             self.boot()

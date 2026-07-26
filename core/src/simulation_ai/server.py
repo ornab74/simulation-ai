@@ -315,10 +315,14 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=47890)
     parser.add_argument("--home", type=Path, default=Path(".simulation-ai"))
     parser.add_argument("--models", type=Path, default=None)
+    parser.add_argument("--diagnose-gemma", action="store_true", help="Print Gemma/LiteRT boot diagnostics and exit")
     args = parser.parse_args()
     if args.host not in {"127.0.0.1", "localhost", "::1"} and os.environ.get("SIMULATION_AI_ALLOW_REMOTE") != "1":
         raise SystemExit("Refusing non-loopback bind without SIMULATION_AI_ALLOW_REMOTE=1")
     engine = SurfaceEngine(args.home, models_dir=args.models)
+    if args.diagnose_gemma:
+        print(json.dumps(engine.gemma.diagnostics(refresh=True), indent=2, ensure_ascii=False))
+        return
     SurfaceHandler.engine = engine
     SurfaceHandler.bearer_token = os.environ.get("SIMULATION_AI_TOKEN", "").strip()
     server = ThreadingHTTPServer((args.host, args.port), SurfaceHandler)

@@ -29,7 +29,8 @@ jobs:
         run: |
           set -euxo pipefail
           python -m pip install --upgrade pip
-          python -m pip install -e core pytest
+          python -m pip install -e 'core[gemma]' pytest
+          python -c "import litert_lm; print('LiteRT-LM API:', litert_lm.__file__)"
           python -m pip check
       - name: Compile Python
         run: python -m compileall -q core/src scripts
@@ -89,9 +90,12 @@ jobs:
         run: |
           set -euxo pipefail
           python -m pip install --upgrade pip
-          python -m pip install -e core pyinstaller
-          python scripts/package_backend.py --output dist/backend --name simulation-ai-core-native
+          python -m pip install -e 'core[gemma]' pyinstaller
+          python scripts/package_backend.py --output dist/backend --name simulation-ai-core-native --with-gemma
           test -f dist/backend/simulation-ai-core-native
+          dist/backend/simulation-ai-core-native --diagnose-gemma > dist/backend/gemma-diagnostics.json
+          grep -q '"id": "litert_lm_native"' dist/backend/gemma-diagnostics.json
+          grep -q '"ready_for_inference": true' dist/backend/gemma-diagnostics.json
       - uses: actions/upload-artifact@v4
         with:
           name: simulation-ai-linux-native-backend
@@ -125,7 +129,7 @@ jobs:
         run: |
           set -euxo pipefail
           python -m pip install --upgrade pip
-          python -m pip install -e core pyinstaller
+          python -m pip install -e 'core[gemma]' pyinstaller
           python -m pip check
       - name: Install Godot and export templates on Windows
         if: runner.os == 'Windows'
@@ -178,8 +182,15 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          python scripts/package_backend.py --output dist/package/backend
+          python scripts/package_backend.py --output dist/package/backend --with-gemma
           python -c "from pathlib import Path; p=Path('dist/package/backend'); assert any(item.is_file() for item in p.iterdir()), f'No backend artifact in {p}'"
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            dist/package/backend/simulation-ai-core.exe --diagnose-gemma > dist/package/backend/gemma-diagnostics.json
+          else
+            dist/package/backend/simulation-ai-core --diagnose-gemma > dist/package/backend/gemma-diagnostics.json
+          fi
+          grep -q '"id": "litert_lm_native"' dist/package/backend/gemma-diagnostics.json
+          grep -q '"ready_for_inference": true' dist/package/backend/gemma-diagnostics.json
       - name: Assemble Windows package
         if: runner.os == 'Windows'
         shell: pwsh
@@ -233,7 +244,7 @@ jobs:
         run: |
           set -euxo pipefail
           python -m pip install --upgrade pip
-          python -m pip install -e core pyinstaller
+          python -m pip install -e 'core[gemma]' pyinstaller
           python -m pip check
       - uses: actions/download-artifact@v4
         with:
@@ -253,9 +264,12 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          python scripts/package_backend.py --output dist/package/backend
+          python scripts/package_backend.py --output dist/package/backend --with-gemma
           test -f dist/package/backend/simulation-ai-core
           test -f dist/package/backend/simulation-ai-core-native
+          dist/package/backend/simulation-ai-core --diagnose-gemma > dist/package/backend/gemma-diagnostics.json
+          grep -q '"id": "litert_lm_native"' dist/package/backend/gemma-diagnostics.json
+          grep -q '"ready_for_inference": true' dist/package/backend/gemma-diagnostics.json
       - name: Assemble Linux package
         shell: bash
         run: |

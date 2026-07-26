@@ -118,6 +118,7 @@ Each package contains:
 
 - a Godot desktop executable;
 - a PyInstaller `simulation-ai-core` backend executable;
+- the embedded Python 3.11 runtime, LiteRT-LM API `0.14.0`, and LiteRT-LM CLI dependency `0.10.1` needed by the bundled Gemma vision worker;
 - a `backend/` runtime that Godot starts automatically (embedded inside the macOS app bundle and stored beside the desktop executable on Linux and Windows).
 
 The Linux archive contains both `simulation-ai-core` (portable/glibc 2.35 baseline) and `simulation-ai-core-native` (glibc 2.38+). The Godot boot selector chooses the compatible one automatically; users do not need to choose a build manually.
@@ -125,9 +126,13 @@ The Linux archive contains both `simulation-ai-core` (portable/glibc 2.35 baseli
 The local backend packaging command is:
 
 ```bash
-python3 -m pip install -e core pyinstaller
-python3 scripts/package_backend.py
+python3 -m pip install -e 'core[gemma]' pyinstaller
+python3 scripts/package_backend.py --with-gemma
 ```
+
+PyInstaller carries Python and the LiteRT native library inside the backend, so the released desktop binary does not depend on a system Python installation. The build uses Python 3.11 and the pinned `litert-lm==0.10.1` package, which resolves the compatible `litert-lm-api==0.14.0` wheel. The boot diagnostics screen verifies that the bundled module and native library are present.
+
+The model vault is kept outside the application binary. Packaged builds use the Godot per-user application-data directory (`user://surface-core/models`); native Python runs use `XDG_DATA_HOME/SimulationAI/models` on Linux, `~/Library/Application Support/SimulationAI/models` on macOS, and `%LOCALAPPDATA%/SimulationAI/models` on Windows. Existing developer `models/` folders are retained without copying the multi-gigabyte file, but are hardened to owner-only permissions on POSIX systems. Set `SIMULATION_AI_MODEL_DIR` to choose another private vault.
 
 ### Tests
 
