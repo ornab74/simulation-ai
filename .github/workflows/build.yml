@@ -93,7 +93,7 @@ jobs:
             godot: Godot_v4.7.1-stable_win64.exe.zip
           - os: macos-15
             preset: macOS
-            artifact: Simulation-AI-macOS-universal.zip
+            artifact: Simulation-AI-macOS-universal.dmg
             godot: Godot_v4.7.1-stable_macos.universal.zip
     steps:
       - uses: actions/checkout@v4
@@ -178,15 +178,30 @@ jobs:
           Copy-Item dist/godot/Windows/* dist/package/app/ -Recurse -Force
           Copy-Item dist/package/backend/* dist/package/app/backend/ -Recurse -Force
           Compress-Archive -Path dist/package/app/* -DestinationPath "dist/${{ matrix.artifact }}" -Force
-      - name: Assemble macOS package
+      - name: Assemble macOS DMG
         if: runner.os == 'macOS'
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p dist/package/app/backend
-          ditto -x -k dist/godot/macOS/SimulationAI-macOS.zip dist/package/app
-          cp -a dist/package/backend/. dist/package/app/backend/
-          ditto -c -k --sequesterRsrc --keepParent dist/package/app "dist/${{ matrix.artifact }}"
+          dmg_root="dist/package/dmg-root"
+          mkdir -p "$dmg_root"
+          ditto -x -k dist/godot/macOS/SimulationAI-macOS.zip "$dmg_root"
+          mac_app="$(find "$dmg_root" -maxdepth 1 -type d -name '*.app' -print -quit)"
+          test -n "$mac_app"
+          mkdir -p "$mac_app/Contents/Resources/backend"
+          cp -a dist/package/backend/. "$mac_app/Contents/Resources/backend/"
+          chmod +x "$mac_app/Contents/Resources/backend/simulation-ai-core"
+          codesign --force --sign - "$mac_app/Contents/Resources/backend/simulation-ai-core"
+          codesign --force --deep --sign - "$mac_app"
+          codesign --verify --deep --strict "$mac_app"
+          ln -s /Applications "$dmg_root/Applications"
+          hdiutil create \
+            -volname "Simulation AI" \
+            -srcfolder "$dmg_root" \
+            -ov \
+            -format UDZO \
+            "dist/${{ matrix.artifact }}"
+          test -f "dist/${{ matrix.artifact }}"
       - uses: actions/upload-artifact@v4
         with:
           name: Simulation-AI-${{ matrix.preset }}

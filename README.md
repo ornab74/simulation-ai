@@ -93,13 +93,13 @@ The UI materializes a temporary decrypted copy only when it needs to display an 
 
 ### Build standalone packages
 
-GitHub Actions builds Godot and the Python backend together for Linux, Windows, and macOS using [.github/workflows/build.yml](.github/workflows/build.yml).
+GitHub Actions builds Godot and the Python backend together for Linux, Windows, and macOS using [.github/workflows/build.yml](.github/workflows/build.yml). The macOS release is a mountable `Simulation-AI-macOS-universal.dmg` containing the universal `.app` and an `/Applications` shortcut.
 
 Each package contains:
 
 - a Godot desktop executable;
 - a PyInstaller `simulation-ai-core` backend executable;
-- a `backend/` sidecar directory that Godot starts automatically.
+- a `backend/` runtime that Godot starts automatically (embedded inside the macOS app bundle and stored beside the desktop executable on Linux and Windows).
 
 The local backend packaging command is:
 

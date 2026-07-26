@@ -65,6 +65,9 @@ func probe() -> void:
 
 func _start_local_core() -> void:
 	var project_root := ProjectSettings.globalize_path("res://")
+	var state_home := project_root.path_join(".simulation-ai")
+	if not OS.has_feature("editor"):
+		state_home = ProjectSettings.globalize_path("user://surface-core")
 	var packaged_core := project_root.path_join("backend/simulation-ai-core")
 	var python_path := project_root.path_join(".runtime/venv/bin/python")
 	var bootstrap := project_root.path_join("scripts/bootstrap_runtime.py")
@@ -76,10 +79,10 @@ func _start_local_core() -> void:
 		executable = "python.exe"
 	if FileAccess.file_exists(packaged_core):
 		executable = packaged_core
-		arguments = PackedStringArray(["--host", "127.0.0.1", "--port", "47890", "--home", project_root.path_join(".simulation-ai")])
+		arguments = PackedStringArray(["--host", "127.0.0.1", "--port", "47890", "--home", state_home])
 	elif FileAccess.file_exists(python_path):
 		executable = python_path
-		arguments = PackedStringArray(["-m", "simulation_ai.server", "--host", "127.0.0.1", "--port", "47890", "--home", project_root.path_join(".simulation-ai")])
+		arguments = PackedStringArray(["-m", "simulation_ai.server", "--host", "127.0.0.1", "--port", "47890", "--home", state_home])
 	OS.create_process(executable, arguments, false)
 
 func refresh_snapshot() -> Dictionary:
