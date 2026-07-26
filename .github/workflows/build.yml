@@ -94,8 +94,7 @@ jobs:
           python scripts/package_backend.py --output dist/backend --name simulation-ai-core-native --with-gemma
           test -f dist/backend/simulation-ai-core-native
           dist/backend/simulation-ai-core-native --diagnose-gemma > dist/backend/gemma-diagnostics.json
-          grep -q '"id": "litert_lm_native"' dist/backend/gemma-diagnostics.json
-          grep -q '"ready_for_inference": true' dist/backend/gemma-diagnostics.json
+          python -c "import json; from pathlib import Path; d=json.loads(Path('dist/backend/gemma-diagnostics.json').read_text()); assert any(c.get('id') == 'litert_lm_native' and c.get('ok') is True for c in d.get('checks', [])), 'Bundled LiteRT-LM native runtime is not healthy'"
       - uses: actions/upload-artifact@v4
         with:
           name: simulation-ai-linux-native-backend
@@ -189,8 +188,7 @@ jobs:
           else
             dist/package/backend/simulation-ai-core --diagnose-gemma > dist/package/backend/gemma-diagnostics.json
           fi
-          grep -q '"id": "litert_lm_native"' dist/package/backend/gemma-diagnostics.json
-          grep -q '"ready_for_inference": true' dist/package/backend/gemma-diagnostics.json
+          python -c "import json; from pathlib import Path; d=json.loads(Path('dist/package/backend/gemma-diagnostics.json').read_text()); assert any(c.get('id') == 'litert_lm_native' and c.get('ok') is True for c in d.get('checks', [])), 'Bundled LiteRT-LM native runtime is not healthy'"
       - name: Assemble Windows package
         if: runner.os == 'Windows'
         shell: pwsh
@@ -268,8 +266,7 @@ jobs:
           test -f dist/package/backend/simulation-ai-core
           test -f dist/package/backend/simulation-ai-core-native
           dist/package/backend/simulation-ai-core --diagnose-gemma > dist/package/backend/gemma-diagnostics.json
-          grep -q '"id": "litert_lm_native"' dist/package/backend/gemma-diagnostics.json
-          grep -q '"ready_for_inference": true' dist/package/backend/gemma-diagnostics.json
+          python -c "import json; from pathlib import Path; d=json.loads(Path('dist/package/backend/gemma-diagnostics.json').read_text()); assert any(c.get('id') == 'litert_lm_native' and c.get('ok') is True for c in d.get('checks', [])), 'Bundled LiteRT-LM native runtime is not healthy'"
       - name: Assemble Linux package
         shell: bash
         run: |
