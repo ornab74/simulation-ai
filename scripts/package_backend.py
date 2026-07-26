@@ -18,8 +18,9 @@ def main() -> int:
     command = [
         sys.executable, "-m", "PyInstaller", "--clean", "--noconfirm", "--onefile",
         "--name", name.removesuffix(".exe"), "--paths", str(ROOT / "core" / "src"),
+        "--collect-all", "simulation_ai",
         "--distpath", str(args.output), "--workpath", str(ROOT / ".build" / "pyinstaller"),
-        "--specpath", str(ROOT / ".build" / "pyinstaller"), str(ROOT / "core" / "src" / "simulation_ai" / "server.py"),
+        "--specpath", str(ROOT / ".build" / "pyinstaller"), str(ROOT / "scripts" / "package_backend_entry.py"),
     ]
     subprocess.run(command, cwd=ROOT, check=True)
     return 0
