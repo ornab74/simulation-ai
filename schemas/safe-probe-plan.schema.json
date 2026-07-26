@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.safe-probe-plan/1",
+  "title": "Safe discovery probe plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "probe_id",
+    "question",
+    "actions",
+    "observations",
+    "stop_conditions",
+    "rollback",
+    "risk"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.safe-probe-plan/1"
+    },
+    "probe_id": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "minItems": 1
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "stop_conditions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "rollback": {
+      "type": "object"
+    },
+    "risk": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "blocked"
+      ]
+    },
+    "forbidden_effects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

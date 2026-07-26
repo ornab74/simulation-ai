@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.test-plan/1",
+  "title": "Deterministic test plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "plan_id",
+    "scope",
+    "cases",
+    "oracles",
+    "fixtures",
+    "coverage",
+    "stop_conditions"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.test-plan/1"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "object"
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "minItems": 1
+    },
+    "oracles": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "fixtures": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "coverage": {
+      "type": "object"
+    },
+    "stop_conditions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "nondeterminism_controls": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

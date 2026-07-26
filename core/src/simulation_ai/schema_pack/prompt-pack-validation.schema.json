@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-pack-validation/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "valid",
+    "pack_id",
+    "pack_version",
+    "prompt_count",
+    "workflow_count",
+    "pack_sha256",
+    "problems"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.prompt-pack-validation/1"
+    },
+    "valid": {
+      "type": "boolean"
+    },
+    "pack_id": {
+      "type": "string"
+    },
+    "pack_version": {
+      "type": "string"
+    },
+    "prompt_count": {
+      "type": "integer"
+    },
+    "workflow_count": {
+      "type": "integer"
+    },
+    "pack_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "problems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

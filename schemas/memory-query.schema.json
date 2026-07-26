@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.memory-query/1",
+  "title": "Memory retrieval query plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "query_id",
+    "queries",
+    "filters",
+    "ranking",
+    "exclusions"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.memory-query/1"
+    },
+    "query_id": {
+      "type": "string"
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "minItems": 1
+    },
+    "filters": {
+      "type": "object"
+    },
+    "ranking": {
+      "type": "object"
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "branch_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "token_budget": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "privacy_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

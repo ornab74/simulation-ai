@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.memory/1",
+  "type": "object",
+  "required": [
+    "memory_id", "memory_type", "branch_scope", "summary", "evidence_ids",
+    "state_hashes", "object_ids", "confidence", "epistemic_class", "retention"
+  ],
+  "properties": {
+    "memory_id": {"type": "string"},
+    "memory_type": {
+      "enum": ["observation", "episodic", "semantic", "causal", "preference", "failure", "contradiction", "counterfactual", "render", "privacy"]
+    },
+    "branch_scope": {"type": "string"},
+    "summary": {"type": "string"},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}},
+    "state_hashes": {"type": "array", "items": {"type": "string"}},
+    "object_ids": {"type": "array", "items": {"type": "string"}},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "epistemic_class": {
+      "enum": ["observed", "inferred", "counterfactual", "speculative", "unknown"]
+    },
+    "retention": {"enum": ["session", "bounded", "persistent"]},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "supersedes": {"type": "array", "items": {"type": "string"}},
+    "contradicts": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

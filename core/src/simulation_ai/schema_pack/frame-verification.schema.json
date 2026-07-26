@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.frame-verification/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "verification_id",
+    "decision",
+    "scores",
+    "findings",
+    "retry_instruction"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.frame-verification/1"
+    },
+    "verification_id": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "pass",
+        "retry",
+        "fallback",
+        "reject",
+        "human_review"
+      ]
+    },
+    "scores": {
+      "type": "object",
+      "properties": {
+        "semantic_fidelity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "temporal_continuity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "identity_stability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "protected_region_stability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "ui_usability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "privacy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "error",
+              "critical"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "retry_instruction": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "frame_manifest_eligible": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

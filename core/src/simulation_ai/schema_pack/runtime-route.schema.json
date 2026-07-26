@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.runtime-route/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "route_id",
+    "strategy",
+    "reason_codes",
+    "isolation",
+    "observability",
+    "fidelity",
+    "blocked_capabilities",
+    "requires_review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.runtime-route/1"
+    },
+    "route_id": {
+      "type": "string"
+    },
+    "strategy": {
+      "enum": [
+        "semantic_twin",
+        "api_protocol_emulator",
+        "managed_runtime",
+        "container_native_sandbox",
+        "compatibility_layer",
+        "virtual_machine",
+        "hardware_emulator",
+        "remote_machine",
+        "unsupported"
+      ]
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "isolation": {
+      "type": "object"
+    },
+    "observability": {
+      "type": "object"
+    },
+    "fidelity": {
+      "type": "object"
+    },
+    "required_backends": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blocked_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rights_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "error",
+              "critical"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

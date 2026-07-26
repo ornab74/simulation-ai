@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.simulation-scenario/1",
+  "title": "Executable simulation scenario",
+  "type": "object",
+  "required": [
+    "schema",
+    "scenario_id",
+    "initial_state_ref",
+    "actors",
+    "goals",
+    "timeline",
+    "events",
+    "constraints",
+    "success_criteria"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.simulation-scenario/1"
+    },
+    "scenario_id": {
+      "type": "string"
+    },
+    "initial_state_ref": {
+      "type": "string"
+    },
+    "actors": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "timeline": {
+      "type": "object"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "success_criteria": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "randomness_policy": {
+      "type": "object"
+    },
+    "branch_points": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

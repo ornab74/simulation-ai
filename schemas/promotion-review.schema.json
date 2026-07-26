@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.promotion-review/1",
+  "title": "Program profile promotion review",
+  "type": "object",
+  "required": [
+    "schema",
+    "review_id",
+    "decision",
+    "verified_components",
+    "blocked_components",
+    "required_tests",
+    "known_gaps"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.promotion-review/1"
+    },
+    "review_id": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "promote",
+        "promote_partial",
+        "retain_hypothesis",
+        "reject",
+        "human_review"
+      ]
+    },
+    "verified_components": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "blocked_components": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "required_tests": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "known_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "version_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

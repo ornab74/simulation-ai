@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.differential-verification/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "verification_id",
+    "decision",
+    "matches",
+    "mismatches",
+    "instrumentation_gaps",
+    "rule_updates",
+    "confidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.differential-verification/1"
+    },
+    "verification_id": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "promote_rule",
+        "retain_hypothesis",
+        "reject_rule",
+        "inconclusive",
+        "human_review"
+      ]
+    },
+    "matches": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "mismatches": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "timing_differences": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "instrumentation_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "known_nondeterminism": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rule_updates": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

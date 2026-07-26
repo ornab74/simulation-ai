@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.patch-critique/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "proposal_id",
+    "recommendation",
+    "findings",
+    "confidence",
+    "requires_human_review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.patch-critique/1"
+    },
+    "proposal_id": {
+      "type": "string"
+    },
+    "recommendation": {
+      "enum": [
+        "continue",
+        "review",
+        "reject"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "error",
+              "critical"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "requires_human_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simulation-ai-core"
+version = "0.6.0"
+description = "Deterministic semantic authority and verified render queue for Simulation AI world surfaces"
+requires-python = ">=3.11"
+dependencies = ["cryptography>=46,<48", "jsonschema>=4.23,<5"]
+
+[project.scripts]
+simulation-ai-core = "simulation_ai.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+simulation_ai = ["prompt_pack/*.md", "prompt_pack/*.json", "schema_pack/*.json"]

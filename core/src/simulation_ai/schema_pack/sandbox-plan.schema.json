@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.sandbox-plan/1",
+  "title": "Sandbox policy proposal",
+  "type": "object",
+  "required": [
+    "schema",
+    "sandbox_id",
+    "runtime_class",
+    "isolation",
+    "capabilities",
+    "network_policy",
+    "filesystem_policy",
+    "resource_limits",
+    "stop_conditions"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.sandbox-plan/1"
+    },
+    "sandbox_id": {
+      "type": "string"
+    },
+    "runtime_class": {
+      "type": "string"
+    },
+    "isolation": {
+      "type": "object"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "network_policy": {
+      "type": "object"
+    },
+    "filesystem_policy": {
+      "type": "object"
+    },
+    "resource_limits": {
+      "type": "object"
+    },
+    "credential_policy": {
+      "type": "object"
+    },
+    "telemetry_policy": {
+      "type": "object"
+    },
+    "stop_conditions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

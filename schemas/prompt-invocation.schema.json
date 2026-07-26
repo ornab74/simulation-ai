@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-invocation/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "invocation_id",
+    "prompt_id",
+    "prompt_version",
+    "prompt_sha256",
+    "pack_id",
+    "pack_version",
+    "authority",
+    "output_schema",
+    "runtime_class",
+    "preferred_model_class",
+    "risk_level",
+    "latency_class",
+    "modalities",
+    "deterministic_gate_required",
+    "messages",
+    "response_format",
+    "openai_strict_compatibility",
+    "policy_layers",
+    "created_at"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.prompt-invocation/1"
+    },
+    "invocation_id": {
+      "type": "string"
+    },
+    "prompt_id": {
+      "type": "string"
+    },
+    "prompt_version": {
+      "type": "string"
+    },
+    "prompt_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pack_version": {
+      "type": "string"
+    },
+    "authority": {
+      "type": "string"
+    },
+    "output_schema": {
+      "type": "string"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "system",
+              "user"
+            ]
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "response_format": {
+      "type": "object"
+    },
+    "policy_layers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pack_id": {
+      "type": "string"
+    },
+    "runtime_class": {
+      "type": "string"
+    },
+    "preferred_model_class": {
+      "type": "string"
+    },
+    "risk_level": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "latency_class": {
+      "type": "string"
+    },
+    "modalities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "deterministic_gate_required": {
+      "type": "boolean"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "openai_strict_compatibility": {
+      "type": "object",
+      "required": [
+        "compatible",
+        "findings",
+        "fallback"
+      ],
+      "properties": {
+        "compatible": {
+          "type": "boolean"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "fallback": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

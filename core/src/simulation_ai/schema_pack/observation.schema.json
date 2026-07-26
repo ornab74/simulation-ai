@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.observation/1",
+  "type": "object",
+  "required": [
+    "schema", "observation_id", "event_id", "logical_time", "branch",
+    "action", "before", "after", "candidate_effects", "contradictions",
+    "unknowns", "confidence", "source"
+  ],
+  "properties": {
+    "schema": {"const": "nmsr.observation/1"},
+    "observation_id": {"type": "string"},
+    "event_id": {"type": "string"},
+    "logical_time": {"type": "integer", "minimum": 0},
+    "branch": {"type": "string"},
+    "action": {"type": "object"},
+    "before": {"type": "object"},
+    "after": {"type": "object"},
+    "candidate_effects": {"type": "array"},
+    "contradictions": {"type": "array", "items": {"type": "string"}},
+    "unknowns": {"type": "array", "items": {"type": "string"}},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "source": {"type": "string"}
+  },
+  "additionalProperties": false
+}

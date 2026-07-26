@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.world-bootstrap/1",
+  "title": "World bootstrap proposal",
+  "type": "object",
+  "required": [
+    "schema",
+    "bootstrap_id",
+    "target",
+    "seed_policy",
+    "initial_objects",
+    "initial_state",
+    "invariants",
+    "provenance"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.world-bootstrap/1"
+    },
+    "bootstrap_id": {
+      "type": "string"
+    },
+    "target": {
+      "type": "object"
+    },
+    "seed_policy": {
+      "type": "object"
+    },
+    "initial_objects": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "initial_state": {
+      "type": "object"
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

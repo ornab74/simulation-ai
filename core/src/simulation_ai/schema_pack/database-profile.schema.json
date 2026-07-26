@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.database-profile/1",
+  "title": "Database semantic profile",
+  "type": "object",
+  "required": [
+    "schema",
+    "profile_id",
+    "engine_class",
+    "entities",
+    "relations",
+    "constraints",
+    "transactions",
+    "evidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.database-profile/1"
+    },
+    "profile_id": {
+      "type": "string"
+    },
+    "engine_class": {
+      "type": "string"
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "transactions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

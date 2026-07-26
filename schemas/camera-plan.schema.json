@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.camera-plan/1",
+  "title": "Camera continuity plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "plan_id",
+    "previous_camera",
+    "target_camera",
+    "continuity_constraints",
+    "transition",
+    "anchors"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.camera-plan/1"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "previous_camera": {
+      "type": "object"
+    },
+    "target_camera": {
+      "type": "object"
+    },
+    "continuity_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "transition": {
+      "type": "object"
+    },
+    "anchors": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "discontinuities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "fallback": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

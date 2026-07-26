@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.action-compilation/1",
+  "title": "Semantic action compilation",
+  "type": "object",
+  "required": [
+    "schema",
+    "compilation_id",
+    "semantic_action",
+    "preconditions",
+    "runtime_operations",
+    "postconditions",
+    "rollback",
+    "verification"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.action-compilation/1"
+    },
+    "compilation_id": {
+      "type": "string"
+    },
+    "semantic_action": {
+      "type": "object"
+    },
+    "preconditions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "runtime_operations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "postconditions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "rollback": {
+      "type": "object"
+    },
+    "verification": {
+      "type": "object"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

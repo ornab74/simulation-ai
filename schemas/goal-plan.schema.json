@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.goal-plan/1",
+  "title": "Goal decomposition plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "plan_id",
+    "root_goal",
+    "subgoals",
+    "success_criteria",
+    "constraints",
+    "unknowns",
+    "requires_review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.goal-plan/1"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "root_goal": {
+      "type": "object"
+    },
+    "subgoals": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "minItems": 1
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "success_criteria": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "branch_strategy": {
+      "type": "object"
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

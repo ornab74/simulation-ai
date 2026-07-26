@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.threat-model/1",
+  "title": "Simulation threat model",
+  "type": "object",
+  "required": [
+    "schema",
+    "model_id",
+    "scope",
+    "assets",
+    "trust_boundaries",
+    "threats",
+    "controls",
+    "residual_risks"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.threat-model/1"
+    },
+    "model_id": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "object"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "trust_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "threats": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "required_tests": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "decision": {
+      "enum": [
+        "acceptable",
+        "conditional",
+        "unacceptable",
+        "human_review"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

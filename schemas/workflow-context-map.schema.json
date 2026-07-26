@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.workflow-context-map/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "workflow_id",
+    "mappings",
+    "missing_inputs",
+    "transformations",
+    "warnings",
+    "confidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.workflow-context-map/1"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "destination_prompt_id",
+          "input_name",
+          "source_kind",
+          "source_id",
+          "source_hash",
+          "mapping_expression"
+        ],
+        "properties": {
+          "destination_prompt_id": {
+            "type": "string"
+          },
+          "input_name": {
+            "type": "string"
+          },
+          "source_kind": {
+            "enum": [
+              "operator-input",
+              "validated-output",
+              "state-reference",
+              "memory-reference",
+              "constant"
+            ]
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "source_hash": {
+            "type": "string"
+          },
+          "mapping_expression": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "missing_inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "transformations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.replay-verification/1",
+  "title": "Replay integrity verification",
+  "type": "object",
+  "required": [
+    "schema",
+    "verification_id",
+    "branch",
+    "decision",
+    "checked_events",
+    "hash_chain",
+    "state_reconstruction",
+    "mismatches"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.replay-verification/1"
+    },
+    "verification_id": {
+      "type": "string"
+    },
+    "branch": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "verified",
+        "mismatch",
+        "incomplete",
+        "human_review"
+      ]
+    },
+    "checked_events": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hash_chain": {
+      "type": "object"
+    },
+    "state_reconstruction": {
+      "type": "object"
+    },
+    "mismatches": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "missing_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "recommended_action": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

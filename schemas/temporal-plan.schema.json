@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.temporal-plan/1",
+  "title": "Logical-time schedule proposal",
+  "type": "object",
+  "required": [
+    "schema",
+    "schedule_id",
+    "clock_model",
+    "tasks",
+    "ordering_constraints",
+    "timers",
+    "stop_conditions"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.temporal-plan/1"
+    },
+    "schedule_id": {
+      "type": "string"
+    },
+    "clock_model": {
+      "type": "object"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "ordering_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "timers": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "stop_conditions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "nondeterminism": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.repair-plan/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "repair_id",
+    "failure_class",
+    "causal_graph",
+    "root_cause_candidates",
+    "containment",
+    "safe_probes",
+    "minimal_repair",
+    "regression_tests",
+    "memory_updates",
+    "requires_review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.repair-plan/1"
+    },
+    "repair_id": {
+      "type": "string"
+    },
+    "failure_class": {
+      "type": "string"
+    },
+    "causal_graph": {
+      "type": "object"
+    },
+    "root_cause_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "containment": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "safe_probes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "minimal_repair": {
+      "type": "object"
+    },
+    "regression_tests": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "memory_updates": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

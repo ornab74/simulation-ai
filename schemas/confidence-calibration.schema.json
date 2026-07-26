@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.confidence-calibration/1",
+  "title": "Profile confidence calibration",
+  "type": "object",
+  "required": [
+    "schema",
+    "calibration_id",
+    "claims",
+    "calibration_summary",
+    "promotion_thresholds"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.confidence-calibration/1"
+    },
+    "calibration_id": {
+      "type": "string"
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "calibration_summary": {
+      "type": "object"
+    },
+    "promotion_thresholds": {
+      "type": "object"
+    },
+    "missing_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "recommended_probes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

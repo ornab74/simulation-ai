@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.model-route/1",
+  "title": "Model runtime routing recommendation",
+  "type": "object",
+  "required": [
+    "schema",
+    "route_id",
+    "role",
+    "selected_class",
+    "fallbacks",
+    "data_boundary",
+    "reasoning"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.model-route/1"
+    },
+    "route_id": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "selected_class": {
+      "type": "string"
+    },
+    "fallbacks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "data_boundary": {
+      "type": "object"
+    },
+    "reasoning": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "latency_budget": {
+      "type": "object"
+    },
+    "cost_budget": {
+      "type": "object"
+    },
+    "requires_cloud_consent": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

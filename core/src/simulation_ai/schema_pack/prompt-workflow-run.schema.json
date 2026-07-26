@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-workflow-run/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "workflow_run_id",
+    "workflow_id",
+    "workflow_title",
+    "status",
+    "steps",
+    "deterministic_gates",
+    "gate_status",
+    "pack_id",
+    "pack_version",
+    "pack_sha256",
+    "commit_authority",
+    "deterministic_gate_required",
+    "created_at"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.prompt-workflow-run/1"
+    },
+    "workflow_run_id": {
+      "type": "string"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "workflow_title": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "awaiting-input",
+        "stopped-invalid",
+        "failed"
+      ]
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "deterministic_gates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "gate_status": {
+      "enum": [
+        "pending",
+        "passed",
+        "failed"
+      ]
+    },
+    "pack_id": {
+      "type": "string"
+    },
+    "pack_version": {
+      "type": "string"
+    },
+    "pack_sha256": {
+      "type": "string"
+    },
+    "commit_authority": {
+      "const": false
+    },
+    "deterministic_gate_required": {
+      "const": true
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "record_sha256": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

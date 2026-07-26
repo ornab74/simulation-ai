@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.deployment-review/1",
+  "title": "Deployment readiness review",
+  "type": "object",
+  "required": [
+    "schema",
+    "review_id",
+    "target",
+    "decision",
+    "checks",
+    "blockers",
+    "warnings",
+    "rollback",
+    "monitoring"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.deployment-review/1"
+    },
+    "review_id": {
+      "type": "string"
+    },
+    "target": {
+      "type": "object"
+    },
+    "decision": {
+      "enum": [
+        "ready",
+        "ready_with_conditions",
+        "not_ready",
+        "human_review"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "rollback": {
+      "type": "object"
+    },
+    "monitoring": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "required_actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

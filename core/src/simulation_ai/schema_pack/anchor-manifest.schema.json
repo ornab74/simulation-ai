@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.anchor-manifest/1",
+  "title": "Visual object anchor manifest",
+  "type": "object",
+  "required": [
+    "schema",
+    "manifest_id",
+    "frame_id",
+    "anchors",
+    "protected_regions",
+    "uncertainties"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.anchor-manifest/1"
+    },
+    "manifest_id": {
+      "type": "string"
+    },
+    "frame_id": {
+      "type": "string"
+    },
+    "anchors": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "protected_regions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "coordinate_space": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.asset-review/1",
+  "title": "Asset provenance and rights review",
+  "type": "object",
+  "required": [
+    "schema",
+    "review_id",
+    "assets",
+    "decision",
+    "provenance_findings",
+    "rights_findings",
+    "required_actions"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.asset-review/1"
+    },
+    "review_id": {
+      "type": "string"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "decision": {
+      "enum": [
+        "allow",
+        "allow_with_conditions",
+        "block",
+        "human_review"
+      ]
+    },
+    "provenance_findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "rights_findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "required_actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "disclosure": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

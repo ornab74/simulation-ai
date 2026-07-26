@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-route/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "task_type",
+    "workflows",
+    "direct_prompts",
+    "requires_deterministic_gate"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.prompt-route/1"
+    },
+    "task_type": {
+      "type": "string"
+    },
+    "workflows": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "direct_prompts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "requires_deterministic_gate": {
+      "const": true
+    }
+  },
+  "additionalProperties": false
+}

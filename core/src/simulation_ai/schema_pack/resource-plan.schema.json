@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.resource-plan/1",
+  "title": "Simulation resource budget plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "plan_id",
+    "budgets",
+    "allocations",
+    "limits",
+    "degradation_policy",
+    "monitoring"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.resource-plan/1"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "budgets": {
+      "type": "object"
+    },
+    "allocations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "limits": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "degradation_policy": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "monitoring": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "admission_decision": {
+      "enum": [
+        "admit",
+        "admit_limited",
+        "defer",
+        "reject"
+      ]
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

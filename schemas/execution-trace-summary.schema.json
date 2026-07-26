@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.execution-trace-summary/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "workflow_run_id",
+    "summary",
+    "run_ids",
+    "output_hashes",
+    "completed_steps",
+    "failed_steps",
+    "skipped_steps",
+    "approvals",
+    "gate_results",
+    "unresolved_issues",
+    "authority_statement"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.execution-trace-summary/1"
+    },
+    "workflow_run_id": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "run_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "output_hashes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "completed_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failed_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skipped_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "gate_results": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unresolved_issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "authority_statement": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

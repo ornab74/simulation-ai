@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-run/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "run_id",
+    "kind",
+    "status",
+    "provider",
+    "prompt_id",
+    "prompt_version",
+    "prompt_sha256",
+    "pack_id",
+    "pack_version",
+    "invocation_id",
+    "request_sha256",
+    "model",
+    "reasoning_effort",
+    "output",
+    "output_sha256",
+    "validation",
+    "approval",
+    "authority",
+    "commit_authority",
+    "deterministic_gate_required",
+    "store_requested",
+    "created_at"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.prompt-run/1"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "kind": {
+      "const": "model-prompt"
+    },
+    "status": {
+      "enum": [
+        "validated",
+        "invalid",
+        "failed"
+      ]
+    },
+    "provider": {
+      "type": "string"
+    },
+    "provider_response_id": {
+      "type": "string"
+    },
+    "provider_request_id": {
+      "type": "string"
+    },
+    "provider_status": {
+      "type": "string"
+    },
+    "credential_source": {
+      "type": "string"
+    },
+    "prompt_id": {
+      "type": "string"
+    },
+    "prompt_version": {
+      "type": "string"
+    },
+    "prompt_sha256": {
+      "type": "string"
+    },
+    "pack_id": {
+      "type": "string"
+    },
+    "pack_version": {
+      "type": "string"
+    },
+    "invocation_id": {
+      "type": "string"
+    },
+    "request_sha256": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "reasoning_effort": {
+      "type": "string"
+    },
+    "max_output_tokens": {
+      "type": "integer"
+    },
+    "attempts": {
+      "type": "integer"
+    },
+    "latency_ms": {
+      "type": "number"
+    },
+    "usage": {
+      "type": "object"
+    },
+    "output": {
+      "type": "object"
+    },
+    "output_sha256": {
+      "type": "string"
+    },
+    "validation": {
+      "type": "object"
+    },
+    "approval": {
+      "type": "object"
+    },
+    "authority": {
+      "type": "string"
+    },
+    "commit_authority": {
+      "const": false
+    },
+    "deterministic_gate_required": {
+      "const": true
+    },
+    "store_requested": {
+      "const": false
+    },
+    "provider_strict_schema": {
+      "type": "boolean"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "record_sha256": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

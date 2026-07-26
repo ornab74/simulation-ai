@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.merge-plan/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "merge_id",
+    "base_state_hash",
+    "left_state_hash",
+    "right_state_hash",
+    "operations",
+    "conflicts",
+    "provenance_links",
+    "requires_review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.merge-plan/1"
+    },
+    "merge_id": {
+      "type": "string"
+    },
+    "base_state_hash": {
+      "type": "string"
+    },
+    "left_state_hash": {
+      "type": "string"
+    },
+    "right_state_hash": {
+      "type": "string"
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "provenance_links": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    },
+    "mergeable": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

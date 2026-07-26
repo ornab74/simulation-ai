@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.mask-plan/1",
+  "title": "Bounded image mask plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "plan_id",
+    "base_frame_id",
+    "affected_regions",
+    "protected_regions",
+    "feathering",
+    "verification"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.mask-plan/1"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "base_frame_id": {
+      "type": "string"
+    },
+    "affected_regions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "protected_regions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "feathering": {
+      "type": "object"
+    },
+    "verification": {
+      "type": "object"
+    },
+    "fallback": {
+      "type": "object"
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

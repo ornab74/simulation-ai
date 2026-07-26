@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.privacy-review/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "review_id",
+    "decision",
+    "redactions",
+    "safe_destinations",
+    "storage_allowed",
+    "requires_review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.privacy-review/1"
+    },
+    "review_id": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "allow",
+        "allow_redacted",
+        "block",
+        "human_review"
+      ]
+    },
+    "redactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "category",
+          "location",
+          "replacement"
+        ],
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "replacement": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "safe_destinations": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "local_model",
+          "cloud_model",
+          "memory",
+          "event_log",
+          "render",
+          "display"
+        ]
+      }
+    },
+    "storage_allowed": {
+      "type": "boolean"
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

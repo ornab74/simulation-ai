@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-run-operator-review/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "run_id",
+    "base_record_sha256",
+    "decision",
+    "approval",
+    "commit_authority",
+    "deterministic_gate_required",
+    "created_at",
+    "review_sha256"
+  ],
+  "properties": {
+    "schema": {"const": "nmsr.prompt-run-operator-review/1"},
+    "run_id": {"type": "string", "minLength": 1, "maxLength": 96},
+    "base_record_sha256": {"type": "string"},
+    "decision": {"enum": ["approve", "reject", "needs-revision"]},
+    "approval": {
+      "type": "object",
+      "required": ["status", "reviewed_by", "note", "reviewed_at"],
+      "properties": {
+        "status": {
+          "enum": ["approved-for-deterministic-review", "rejected", "needs-revision"]
+        },
+        "reviewed_by": {"type": "string", "maxLength": 120},
+        "note": {"type": "string", "maxLength": 2000},
+        "reviewed_at": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "commit_authority": {"const": false},
+    "deterministic_gate_required": {"const": true},
+    "created_at": {"type": "string"},
+    "review_sha256": {"type": "string"}
+  },
+  "additionalProperties": false
+}

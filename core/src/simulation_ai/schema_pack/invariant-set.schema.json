@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.invariant-set/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "set_id",
+    "invariants"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.invariant-set/1"
+    },
+    "set_id": {
+      "type": "string"
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "invariant_id",
+          "category",
+          "predicate",
+          "severity",
+          "validation_timing"
+        ],
+        "properties": {
+          "invariant_id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "predicate": {
+            "type": "object"
+          },
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "error",
+              "critical"
+            ]
+          },
+          "counterexample": {
+            "type": "object"
+          },
+          "validation_timing": {
+            "enum": [
+              "proposal",
+              "pre_commit",
+              "post_commit",
+              "replay",
+              "continuous"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "epistemic_class": {
+            "enum": [
+              "observed",
+              "inferred",
+              "counterfactual",
+              "speculative",
+              "unknown"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

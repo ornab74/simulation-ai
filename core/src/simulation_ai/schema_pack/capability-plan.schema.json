@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.capability-plan/1",
+  "title": "Least-privilege capability recommendation",
+  "type": "object",
+  "required": [
+    "schema",
+    "request_id",
+    "requested_capabilities",
+    "grants",
+    "denials",
+    "conditions",
+    "requires_review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.capability-plan/1"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "requested_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "grants": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "denials": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "least_privilege_summary": {
+      "type": "string"
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

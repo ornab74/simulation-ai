@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.surface-state/2",
+  "title": "Simulation AI Surface State",
+  "type": "object",
+  "required": [
+    "schema_version", "map_id", "target", "logical_time", "branch",
+    "state_hash", "objects", "ui", "layer_state", "render", "provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": "nmsr.surface-state/2"},
+    "map_id": {"type": "string", "minLength": 1},
+    "target": {"type": "string", "minLength": 1},
+    "profile": {"type": "string"},
+    "mode": {"enum": ["behavioral", "architectural", "hybrid", "speculative"]},
+    "seed": {"type": "integer"},
+    "logical_time": {"type": "integer", "minimum": 0},
+    "branch": {"type": "string", "pattern": "^[a-z0-9_-]{1,64}$"},
+    "parent_state_hash": {"type": "string"},
+    "state_hash": {"type": "string"},
+    "entropy_bits": {"type": "number", "minimum": 0},
+    "coherence": {"type": "number", "minimum": 0, "maximum": 1},
+    "selected_object_id": {"type": "string"},
+    "active_focus_id": {"type": "string"},
+    "objects": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "status"],
+        "properties": {
+          "type": {"type": "string"},
+          "label": {"type": "string"},
+          "status": {"type": "string"},
+          "epistemic_class": {
+            "enum": ["observed", "inferred", "counterfactual", "speculative", "unknown"]
+          },
+          "layout": {
+            "type": "array",
+            "prefixItems": [{"type": "number"}, {"type": "number"}],
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "properties": {"type": "object"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "ui": {"type": "object"},
+    "goals": {"type": "array"},
+    "plans": {"type": "array"},
+    "hypotheses": {"type": "array"},
+    "claims": {"type": "array"},
+    "layer_state": {
+      "type": "object",
+      "required": [
+        "sensorium", "signals", "objects", "states", "events",
+        "goals", "plans", "causal_model", "meta_model", "identity"
+      ]
+    },
+    "render": {
+      "type": "object",
+      "required": ["status", "requested_mode", "committed_frame_id", "pending_job_id"]
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["authority", "generated_content_disclosure", "pixel_state_authoritative"],
+      "properties": {
+        "pixel_state_authoritative": {"const": false}
+      }
+    }
+  },
+  "additionalProperties": false
+}

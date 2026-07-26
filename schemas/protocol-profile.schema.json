@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.protocol-profile/1",
+  "title": "Network protocol profile",
+  "type": "object",
+  "required": [
+    "schema",
+    "profile_id",
+    "transport",
+    "messages",
+    "state_machine",
+    "timing",
+    "errors",
+    "evidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.protocol-profile/1"
+    },
+    "profile_id": {
+      "type": "string"
+    },
+    "transport": {
+      "type": "object"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "state_machine": {
+      "type": "object"
+    },
+    "timing": {
+      "type": "object"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "security": {
+      "type": "object"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

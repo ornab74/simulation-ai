@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.interaction/1",
+  "title": "Exact Interaction Packet",
+  "type": "object",
+  "required": [
+    "schema", "event_id", "session_id", "branch", "logical_time",
+    "parent_state_hash", "source", "action", "target", "privacy"
+  ],
+  "properties": {
+    "schema": {"const": "nmsr.interaction/1"},
+    "event_id": {"type": "string", "minLength": 1, "maxLength": 180},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 180},
+    "branch": {"type": "string", "minLength": 1, "maxLength": 64},
+    "logical_time": {"type": "integer", "minimum": 0},
+    "parent_state_hash": {"type": "string"},
+    "monotonic_timestamp_ns": {"type": "integer", "minimum": 0},
+    "source": {"enum": ["godot", "flutter", "test", "adapter"]},
+    "action": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "enum": ["click", "double_click", "drag", "scroll", "type", "command", "focus"]
+        },
+        "text": {"type": ["string", "null"], "maxLength": 4000},
+        "typed_character_count": {"type": "integer", "minimum": 0},
+        "name": {"type": "string", "maxLength": 1000},
+        "pointer": {"type": "object"},
+        "drag": {"type": "object"},
+        "scroll": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
+    "target": {
+      "type": "object",
+      "required": ["node_id", "sensitive"],
+      "properties": {
+        "node_id": {"type": "string", "minLength": 1},
+        "accessible_label": {"type": "string"},
+        "sensitive": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "privacy": {
+      "type": "object",
+      "required": ["cloud_allowed", "frame_retention", "redactions"],
+      "properties": {
+        "cloud_allowed": {"type": "boolean"},
+        "frame_retention": {"enum": ["ephemeral", "bounded", "persistent-keyframes"]},
+        "redactions": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "additionalProperties": true
+}

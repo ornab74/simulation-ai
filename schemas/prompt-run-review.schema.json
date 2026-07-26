@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-run-review/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "run_id",
+    "recommendation",
+    "schema_valid",
+    "semantic_findings",
+    "authority_findings",
+    "evidence_findings",
+    "privacy_findings",
+    "injection_findings",
+    "required_next_gate",
+    "confidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.prompt-run-review/1"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "recommendation": {
+      "enum": [
+        "continue-to-gate",
+        "revise",
+        "reject"
+      ]
+    },
+    "schema_valid": {
+      "type": "boolean"
+    },
+    "semantic_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "authority_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "privacy_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "injection_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_next_gate": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

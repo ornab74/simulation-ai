@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.image-edit-instruction/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "instruction_id",
+    "base_frame_id",
+    "committed_state_hash",
+    "instruction",
+    "mask_regions",
+    "preserve",
+    "forbidden",
+    "fallback"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.image-edit-instruction/1"
+    },
+    "instruction_id": {
+      "type": "string"
+    },
+    "base_frame_id": {
+      "type": "string"
+    },
+    "committed_state_hash": {
+      "type": "string"
+    },
+    "instruction": {
+      "type": "string"
+    },
+    "mask_regions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "preserve": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "native_text_overlay": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "privacy_redactions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "fallback": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

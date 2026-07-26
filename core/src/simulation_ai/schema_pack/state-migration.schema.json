@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.state-migration/1",
+  "title": "State schema migration proposal",
+  "type": "object",
+  "required": [
+    "schema",
+    "migration_id",
+    "from_schema",
+    "to_schema",
+    "operations",
+    "invariants",
+    "rollback",
+    "loss_analysis"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.state-migration/1"
+    },
+    "migration_id": {
+      "type": "string"
+    },
+    "from_schema": {
+      "type": "string"
+    },
+    "to_schema": {
+      "type": "string"
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "rollback": {
+      "type": "object"
+    },
+    "loss_analysis": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "test_vectors": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-run-review-decision/1",
+  "type": "object",
+  "required": [
+    "run_id",
+    "decision"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "approve",
+        "reject",
+        "needs-revision"
+      ]
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "reviewed_by": {
+      "type": "string",
+      "maxLength": 120
+    }
+  },
+  "additionalProperties": false
+}

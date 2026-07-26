@@ -1,0 +1,33 @@
+name: simulation-ai-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Compile
+        run: PYTHONPATH=core/src python -m compileall -q core/src
+      - name: Check prompt mirrors
+        run: python scripts/sync-prompt-pack.py --check
+      - name: Validate prompt pack
+        run: PYTHONPATH=core/src python -m simulation_ai.prompts --validate
+      - name: Check generated prompt catalog
+        run: |
+          python scripts/export-prompt-catalog.py
+          git diff --exit-code -- docs/PROMPT_CATALOG.md
+      - name: Test deterministic core
+        run: PYTHONPATH=core/src python -m unittest discover -s core/tests -v
+      - name: Reject chess product residue
+        run: |
+          if grep -RniE 'caissa|chess_board|legal[-_ ]move|saved games' \
+            --exclude-dir=.git --exclude=MIGRATION.md --exclude=ci.yml .; then
+            echo "Chess product residue detected"
+            exit 1
+          fi

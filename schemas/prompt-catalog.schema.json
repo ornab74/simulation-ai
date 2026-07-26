@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-catalog/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "pack_id",
+    "pack_version",
+    "prompt_count",
+    "callable_prompt_count",
+    "openai_strict_prompt_count",
+    "workflow_count",
+    "valid",
+    "pack_sha256",
+    "prompts",
+    "workflows"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.prompt-catalog/1"
+    },
+    "pack_id": {
+      "type": "string"
+    },
+    "pack_version": {
+      "type": "string"
+    },
+    "prompt_count": {
+      "type": "integer"
+    },
+    "callable_prompt_count": {
+      "type": "integer"
+    },
+    "workflow_count": {
+      "type": "integer"
+    },
+    "valid": {
+      "type": "boolean"
+    },
+    "pack_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "prompts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "workflows": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "openai_strict_prompt_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}

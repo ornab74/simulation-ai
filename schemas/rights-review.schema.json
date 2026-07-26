@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.rights-review/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "review_id",
+    "decision",
+    "findings",
+    "required_controls",
+    "requires_review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.rights-review/1"
+    },
+    "review_id": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "allow",
+        "allow_sandboxed",
+        "allow_clean_room",
+        "block",
+        "human_review"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "error",
+              "critical"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required_controls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unsupported_assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requires_review": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

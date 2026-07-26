@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.execution-estimate/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "workflow_id",
+    "estimated_input_tokens",
+    "estimated_output_tokens",
+    "estimated_attempts",
+    "latency_range_ms",
+    "monetary_estimate",
+    "budget_findings",
+    "recommended_route",
+    "confidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.execution-estimate/1"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "estimated_input_tokens": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "estimated_output_tokens": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "estimated_attempts": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "latency_range_ms": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "monetary_estimate": {
+      "type": "object",
+      "required": [
+        "currency",
+        "minimum",
+        "maximum",
+        "basis"
+      ],
+      "properties": {
+        "currency": {
+          "type": "string"
+        },
+        "minimum": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "maximum": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "basis": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "budget_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommended_route": {
+      "enum": [
+        "local",
+        "cloud",
+        "hybrid",
+        "deterministic-fallback",
+        "defer"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

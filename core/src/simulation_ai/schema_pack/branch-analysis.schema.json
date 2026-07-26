@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.branch-analysis/1",
+  "title": "Counterfactual branch comparison",
+  "type": "object",
+  "required": [
+    "schema",
+    "analysis_id",
+    "base_hash",
+    "branches",
+    "differences",
+    "outcomes",
+    "recommendation"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.branch-analysis/1"
+    },
+    "analysis_id": {
+      "type": "string"
+    },
+    "base_hash": {
+      "type": "string"
+    },
+    "branches": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "minItems": 2
+    },
+    "differences": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "recommendation": {
+      "type": "object"
+    },
+    "merge_eligibility": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.tool-policy-review/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "call_id",
+    "decision",
+    "matched_capabilities",
+    "missing_capabilities",
+    "rights_findings",
+    "sandbox_findings",
+    "side_effects",
+    "rollback_required",
+    "human_confirmation_required",
+    "reason"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.tool-policy-review/1"
+    },
+    "call_id": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "allow-to-deterministic-executor",
+        "deny",
+        "require-clarification",
+        "require-human-confirmation"
+      ]
+    },
+    "matched_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rights_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sandbox_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "side_effects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rollback_required": {
+      "type": "boolean"
+    },
+    "human_confirmation_required": {
+      "type": "boolean"
+    },
+    "reason": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

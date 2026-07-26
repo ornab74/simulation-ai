@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.state-schema-proposal/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "schema_id",
+    "target_scope",
+    "object_types",
+    "state_partitions",
+    "protected_fields",
+    "sensitive_fields",
+    "migrations",
+    "unknown_field_policy"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.state-schema-proposal/1"
+    },
+    "schema_id": {
+      "type": "string"
+    },
+    "target_scope": {
+      "type": "string"
+    },
+    "object_types": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "state_partitions": {
+      "type": "object"
+    },
+    "protected_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sensitive_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "authoritative_sources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "extensions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "unknown_field_policy": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

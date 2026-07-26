@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.evaluation-report/1",
+  "title": "Evaluation report",
+  "type": "object",
+  "required": [
+    "schema",
+    "report_id",
+    "subject",
+    "metrics",
+    "results",
+    "failures",
+    "decision"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.evaluation-report/1"
+    },
+    "report_id": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "object"
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "decision": {
+      "enum": [
+        "pass",
+        "conditional_pass",
+        "fail",
+        "inconclusive",
+        "human_review"
+      ]
+    },
+    "regressions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

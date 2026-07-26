@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.intent/1",
+  "title": "Operator intent interpretation",
+  "type": "object",
+  "required": [
+    "schema",
+    "intent_id",
+    "summary",
+    "target_object_ids",
+    "desired_outcome",
+    "constraints",
+    "ambiguities",
+    "confidence",
+    "epistemic_class"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.intent/1"
+    },
+    "intent_id": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "target_object_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "desired_outcome": {
+      "type": "object"
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "clarification_needed": {
+      "type": "boolean"
+    },
+    "safe_default": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "epistemic_class": {
+      "enum": [
+        "observed",
+        "inferred",
+        "counterfactual",
+        "speculative",
+        "unknown"
+      ]
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.contradiction-resolution/1",
+  "title": "Contradiction resolution advisory",
+  "type": "object",
+  "required": [
+    "schema",
+    "resolution_id",
+    "contradictions",
+    "decision",
+    "retained_alternatives",
+    "evidence_requirements"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.contradiction-resolution/1"
+    },
+    "resolution_id": {
+      "type": "string"
+    },
+    "contradictions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "decision": {
+      "enum": [
+        "resolved",
+        "partially_resolved",
+        "unresolved",
+        "superseded",
+        "human_review"
+      ]
+    },
+    "retained_alternatives": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "memory_updates": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

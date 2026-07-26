@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.render-plan/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "plan_id",
+    "state_hash",
+    "mode",
+    "affected_object_ids",
+    "preserve_anchors",
+    "forbidden_changes",
+    "fallback_mode",
+    "verification_thresholds"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.render-plan/1"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "state_hash": {
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "none",
+        "native_ui",
+        "composite",
+        "regional_image_edit",
+        "new_keyframe"
+      ]
+    },
+    "affected_object_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "affected_regions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "preserve_anchors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "protected_ui_regions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "forbidden_changes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fallback_mode": {
+      "enum": [
+        "none",
+        "native_ui",
+        "composite"
+      ]
+    },
+    "verification_thresholds": {
+      "type": "object"
+    },
+    "disclosure_required": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.ontology-mapping/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "mapping_id",
+    "source_namespace",
+    "mappings",
+    "unmapped_concepts"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.ontology-mapping/1"
+    },
+    "mapping_id": {
+      "type": "string"
+    },
+    "source_namespace": {
+      "type": "string"
+    },
+    "mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_concept",
+          "relationship"
+        ],
+        "properties": {
+          "source_concept": {
+            "type": "string"
+          },
+          "universal_concept": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationship": {
+            "enum": [
+              "equivalent",
+              "specialization",
+              "approximation",
+              "no_match"
+            ]
+          },
+          "extensions": {
+            "type": "object"
+          },
+          "losses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "unmapped_concepts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

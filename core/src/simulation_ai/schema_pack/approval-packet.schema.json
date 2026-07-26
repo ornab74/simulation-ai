@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.approval-packet/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "packet_id",
+    "candidate_hash",
+    "validation_hash",
+    "summary",
+    "material_changes",
+    "evidence_links",
+    "uncertainties",
+    "risks",
+    "approval_effect",
+    "approval_non_effect",
+    "next_gate",
+    "recommended_decision"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.approval-packet/1"
+    },
+    "packet_id": {
+      "type": "string"
+    },
+    "candidate_hash": {
+      "type": "string"
+    },
+    "validation_hash": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "material_changes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_links": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approval_effect": {
+      "type": "string"
+    },
+    "approval_non_effect": {
+      "type": "string"
+    },
+    "next_gate": {
+      "type": "string"
+    },
+    "recommended_decision": {
+      "enum": [
+        "approve-for-gate",
+        "needs-revision",
+        "reject"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

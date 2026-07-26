@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.plan-review/1",
+  "title": "Adversarial plan review",
+  "type": "object",
+  "required": [
+    "schema",
+    "review_id",
+    "decision",
+    "findings",
+    "unsafe_steps",
+    "missing_evidence",
+    "required_changes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.plan-review/1"
+    },
+    "review_id": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "approve_advisory",
+        "revise",
+        "block",
+        "human_review"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "unsafe_steps": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "missing_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "required_changes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "residual_risk": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

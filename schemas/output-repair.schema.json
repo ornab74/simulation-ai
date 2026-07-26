@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.output-repair/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "original_output_sha256",
+    "repairable",
+    "repair_strategy",
+    "repaired_output",
+    "unresolved_findings",
+    "requires_fresh_call",
+    "confidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.output-repair/1"
+    },
+    "original_output_sha256": {
+      "type": "string"
+    },
+    "repairable": {
+      "type": "boolean"
+    },
+    "repair_strategy": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repaired_output": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "unresolved_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requires_fresh_call": {
+      "type": "boolean"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

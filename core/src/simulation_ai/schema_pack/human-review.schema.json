@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.human-review/1",
+  "title": "Human review packet",
+  "type": "object",
+  "required": [
+    "schema",
+    "review_id",
+    "question",
+    "decision_needed",
+    "facts",
+    "uncertainties",
+    "options",
+    "recommended_default"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.human-review/1"
+    },
+    "review_id": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "decision_needed": {
+      "type": "string"
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "recommended_default": {
+      "type": "object"
+    },
+    "blocked_actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

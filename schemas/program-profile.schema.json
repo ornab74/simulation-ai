@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.program-profile/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "profile_id",
+    "program_family",
+    "profile_version",
+    "execution_strategy",
+    "state_schema_ref",
+    "action_grammar_ref",
+    "invariant_set_ref",
+    "capabilities",
+    "known_gaps",
+    "confidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.program-profile/1"
+    },
+    "profile_id": {
+      "type": "string"
+    },
+    "program_family": {
+      "type": "string"
+    },
+    "profile_version": {
+      "type": "string"
+    },
+    "supported_versions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "execution_strategy": {
+      "type": "object"
+    },
+    "state_schema_ref": {
+      "type": "string"
+    },
+    "action_grammar_ref": {
+      "type": "string"
+    },
+    "invariant_set_ref": {
+      "type": "string"
+    },
+    "observer_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "renderer_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "probe_policy": {
+      "type": "object"
+    },
+    "known_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "epistemic_class": {
+      "enum": [
+        "observed",
+        "inferred",
+        "counterfactual",
+        "speculative",
+        "unknown"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

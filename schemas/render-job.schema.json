@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.render-job/1",
+  "type": "object",
+  "required": [
+    "job_id", "event_id", "state_hash", "branch", "mode", "status",
+    "base_frame_id", "affected_object_ids", "semantic_changes", "prompt",
+    "preserve_anchors", "forbidden_changes", "retries", "max_retries", "verification"
+  ],
+  "properties": {
+    "job_id": {"type": "string"},
+    "event_id": {"type": "string"},
+    "state_hash": {"type": "string"},
+    "branch": {"type": "string"},
+    "mode": {"enum": ["none", "native_ui", "composite", "regional_image_edit", "new_keyframe"]},
+    "status": {"enum": ["queued", "candidate", "verified", "fallback", "rejected"]},
+    "base_frame_id": {"type": "string"},
+    "affected_object_ids": {"type": "array", "items": {"type": "string"}},
+    "semantic_changes": {"type": "array", "items": {"type": "string"}},
+    "prompt": {"type": "string"},
+    "mask_bounds": {"type": "array"},
+    "preserve_anchors": {"type": "array", "items": {"type": "string"}},
+    "forbidden_changes": {"type": "array", "items": {"type": "string"}},
+    "retries": {"type": "integer", "minimum": 0},
+    "max_retries": {"type": "integer", "minimum": 0},
+    "verification": {"type": "object"}
+  },
+  "additionalProperties": true
+}

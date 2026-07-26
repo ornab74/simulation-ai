@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.prompt-output-validation/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "prompt_id",
+    "prompt_version",
+    "output_schema",
+    "output_sha256",
+    "valid",
+    "findings",
+    "deterministic_gate_required",
+    "authority",
+    "commit_authority"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.prompt-output-validation/1"
+    },
+    "prompt_id": {
+      "type": "string"
+    },
+    "prompt_version": {
+      "type": "string"
+    },
+    "output_schema": {
+      "type": "string"
+    },
+    "output_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "valid": {
+      "type": "boolean"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "message",
+          "validator"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "validator": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "deterministic_gate_required": {
+      "const": true
+    },
+    "authority": {
+      "type": "string"
+    },
+    "commit_authority": {
+      "const": false
+    }
+  },
+  "additionalProperties": false
+}

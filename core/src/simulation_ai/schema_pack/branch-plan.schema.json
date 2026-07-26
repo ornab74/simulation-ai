@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nmsr.branch-plan/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "plan_id",
+    "source_branch",
+    "fork_state_hash",
+    "question",
+    "assumptions",
+    "steps",
+    "stop_conditions",
+    "evaluation",
+    "merge_eligible"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nmsr.branch-plan/1"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "source_branch": {
+      "type": "string"
+    },
+    "fork_state_hash": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "allowed_mutations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_mutations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stop_conditions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evaluation": {
+      "type": "object"
+    },
+    "merge_eligible": {
+      "type": "boolean"
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
