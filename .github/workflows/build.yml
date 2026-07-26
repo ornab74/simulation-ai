@@ -35,6 +35,13 @@ jobs:
         run: python -m pytest -q core/tests
       - name: Validate Godot structure
         run: python scripts/check-godot-structure.py
+      - name: Validate all platform export presets
+        shell: bash
+        run: |
+          set -euo pipefail
+          for preset in Linux Windows macOS Android iOS; do
+            grep -Fq "name=\"${preset}\"" export_presets.cfg || { echo "Missing preset: ${preset}"; exit 1; }
+          done
       - name: Check prompt mirrors
         run: python scripts/sync-prompt-pack.py --check
       - name: Validate prompt pack
@@ -89,7 +96,10 @@ jobs:
       - name: Install Windows download prerequisite
         if: runner.os == 'Windows'
         shell: pwsh
-        run: choco install wget -y --no-progress
+        run: |
+          choco install wget -y --no-progress
+          $env:Path += ';C:\ProgramData\chocolatey\bin'
+          if (-not (Get-Command wget -ErrorAction SilentlyContinue)) { throw 'wget was not found after installation' }
       - name: Install Godot and export shell
         uses: firebelley/godot-export@v8.0.0
         with:
@@ -166,6 +176,12 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+      - name: Apply Apple Team ID when signing configuration is provided
+        if: ${{ secrets.IOS_TEAM_ID != '' }}
+        shell: bash
+        run: sed -i '' "s/0000000000/${IOS_TEAM_ID}/g" export_presets.cfg
+        env:
+          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
       - name: Export unsigned iOS project
         uses: firebelley/godot-export@v8.0.0
         with:
